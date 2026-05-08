@@ -1,0 +1,15 @@
+[Unit]
+Description=Music MiniMax Backend
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/path/to/music-minimax/backend
+Environment="FLASK_PORT=5000"
+ExecStart=/path/to/venv/bin/python app.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

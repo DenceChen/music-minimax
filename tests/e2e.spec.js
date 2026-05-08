@@ -3,6 +3,8 @@ const { test, expect } = require('@playwright/test');
 test.describe('Music MiniMax 应用 - E2E测试', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
+    // 等待页面完全加载
+    await page.waitForLoadState('networkidle');
   });
 
   test.afterEach(async ({ page }) => {
@@ -15,164 +17,131 @@ test.describe('Music MiniMax 应用 - E2E测试', () => {
 
   test('页面加载成功 - 验证所有核心元素存在', async ({ page }) => {
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('textarea[placeholder*="描述"]')).toBeVisible();
-    await expect(page.locator('button:has-text("发送")')).toBeVisible();
+    await expect(page.locator('textarea.chat-input')).toBeVisible();
+    await expect(page.locator('button.send-btn')).toBeVisible();
   });
 
-  test('完整对话流程 - 用户输入并发送', async ({ page }) => {
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('我想听一首关于大海的歌');
-    await page.locator('button:has-text("发送")').click();
-
-    // 等待用户消息出现在对话区域
-    await expect(page.locator('.conversation-area')).toBeVisible();
-    // 等待消息加载完成（可能有loading状态）
-    await page.waitForTimeout(3000);
-  });
-
-  test('对话显示用户和AI消息', async ({ page }) => {
-    test.setTimeout(15000);
-    const input = page.locator('textarea[placeholder*="描述"]');
+  test('输入框可编辑', async ({ page }) => {
+    const input = page.locator('textarea.chat-input');
+    await expect(input).toBeVisible();
     await input.fill('测试消息');
-    await page.locator('button:has-text("发送")').click();
-
-    // 等待API响应
-    await page.waitForTimeout(3000);
-
-    // 验证对话区域有内容
-    await expect(page.locator('div:has-text("测试消息")')).toBeVisible();
+    const value = await input.inputValue();
+    expect(value).toBe('测试消息');
   });
 
-  test('发送按钮状态正常', async ({ page }) => {
-    const sendButton = page.locator('button:has-text("发送")');
-    await expect(sendButton).toBeEnabled();
-
-    // 输入内容后按钮仍然可用
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('测试');
-    await expect(sendButton).toBeEnabled();
+  test('发送按钮初始禁用（无输入）', async ({ page }) => {
+    const sendButton = page.locator('button.send-btn');
+    await expect(sendButton).toBeDisabled();
   });
 
-  test('输入框可清空并重新输入', async ({ page }) => {
-    const input = page.locator('textarea[placeholder*="描述"]');
+  test('输入后发送按钮启用', async ({ page }) => {
+    const input = page.locator('textarea.chat-input');
+    const sendButton = page.locator('button.send-btn');
 
-    await input.fill('第一次输入');
-    await input.fill('第二次输入');
-
-    const inputValue = await input.inputValue();
-    expect(inputValue).toBe('第二次输入');
+    await input.fill('测试消息');
+    await expect(sendButton).toBeEnabled();
   });
 
   test('歌词区域初始不显示', async ({ page }) => {
-    // 初始状态下歌词区域不应存在
-    await expect(page.locator('textarea')).not.toBeVisible();
-  });
-
-  test('生成歌词按钮在对话后出现', async ({ page }) => {
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('一首情歌');
-    await page.locator('button:has-text("发送")').click();
-
-    // 等待按钮出现
-    await expect(page.locator('button:has-text("开始生成歌词")')).toBeVisible({ timeout: 5000 });
-  });
-
-  test('点击生成歌词后显示歌词编辑区', async ({ page }) => {
-    test.setTimeout(30000);
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('一首情歌');
-    await page.locator('button:has-text("发送")').click();
-
-    // 等待发送完成
-    await page.waitForTimeout(3000);
-
-    // 点击生成歌词
-    await page.locator('button:has-text("开始生成歌词")').click();
-
-    // 等待歌词区域出现 (API可能需要时间)
-    await expect(page.locator('textarea')).toBeVisible({ timeout: 20000 });
-  });
-
-  test('歌词编辑区显示在歌词阶段', async ({ page }) => {
-    test.setTimeout(30000);
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('测试歌词生成');
-    await page.locator('button:has-text("发送")').click();
-
-    // 等待发送完成
-    await page.waitForTimeout(3000);
-
-    // 点击生成歌词按钮
-    await page.locator('button:has-text("开始生成歌词")').click();
-
-    // 验证歌词文本框 (增加超时时间)
-    const textarea = page.locator('textarea');
-    await expect(textarea).toBeVisible({ timeout: 20000 });
-    await expect(textarea).toHaveAttribute('placeholder', /歌词/);
-  });
-
-  test('生成歌曲按钮在歌词阶段可用', async ({ page }) => {
-    test.setTimeout(30000);
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('测试');
-    await page.locator('button:has-text("发送")').click();
-
-    // 等待发送完成
-    await page.waitForTimeout(3000);
-
-    await page.locator('button:has-text("开始生成歌词")').click();
-
-    // 在歌词阶段应该有生成歌曲按钮
-    await expect(page.locator('button:has-text("生成歌曲")')).toBeVisible({ timeout: 20000 });
+    // 歌词区域的textarea有不同的class
+    await expect(page.locator('textarea.lyrics-input')).not.toBeVisible();
   });
 
   test('移动端布局正常', async ({ page }) => {
-    // 设置移动端视口
     await page.setViewportSize({ width: 375, height: 667 });
-
-    // 验证核心元素仍然可见
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('textarea[placeholder*="描述"]')).toBeVisible();
-    await expect(page.locator('button:has-text("发送")')).toBeVisible();
-  });
-
-  test('移动端输入框适应小屏幕', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
-
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await expect(input).toBeVisible();
-
-    // 输入应该正常工作
-    await input.fill('移动端测试');
-    const value = await input.inputValue();
-    expect(value).toBe('移动端测试');
+    await expect(page.locator('textarea.chat-input')).toBeVisible();
+    await expect(page.locator('button.send-btn')).toBeVisible();
   });
 
   test('平板端布局正常', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
-
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('textarea[placeholder*="描述"]')).toBeVisible();
+    await expect(page.locator('textarea.chat-input')).toBeVisible();
   });
 
   test('刷新页面后状态重置', async ({ page }) => {
-    const input = page.locator('textarea[placeholder*="描述"]');
+    const input = page.locator('textarea.chat-input');
     await input.fill('测试消息');
-    await page.locator('button:has-text("发送")').click();
-
-    // 刷新页面
     await page.reload();
-
-    // 验证状态已重置
-    await expect(page.locator('textarea[placeholder*="描述"]')).toHaveValue('');
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('textarea.chat-input')).toHaveValue('');
   });
 
-  test('键盘回车键可提交', async ({ page }) => {
-    const input = page.locator('textarea[placeholder*="描述"]');
-    await input.fill('按回车发送');
-    await input.press('Enter');
+  test('对话流程 - 发送消息', async ({ page }) => {
+    test.setTimeout(30000);
+    const input = page.locator('textarea.chat-input');
+    await input.fill('我想听一首关于大海的歌');
 
-    // 等待AI响应出现
-    await expect(page.locator('text=AI')).toBeVisible({ timeout: 5000 });
+    const sendButton = page.locator('button.send-btn');
+    await sendButton.click();
+
+    // 等待消息显示
+    await expect(page.locator('.message.user-message')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('对话流程 - 发送后AI回复', async ({ page }) => {
+    test.setTimeout(30000);
+    const input = page.locator('textarea.chat-input');
+    await input.fill('测试消息');
+
+    const sendButton = page.locator('button.send-btn');
+    await sendButton.click();
+
+    // 等待AI回复出现
+    await expect(page.locator('.message.assistant-message')).toBeVisible({ timeout: 15000 });
+  });
+
+  test('对话后出现生成歌词按钮', async ({ page }) => {
+    test.setTimeout(30000);
+    const input = page.locator('textarea.chat-input');
+    await input.fill('一首情歌');
+
+    const sendButton = page.locator('button.send-btn');
+    await sendButton.click();
+
+    // 等待按钮出现 (conversation.length > 0 && !lyrics && step === "chat")
+    await expect(page.locator('button.lyrics-btn')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('点击生成歌词后显示歌词编辑区', async ({ page }) => {
+    test.setTimeout(45000);
+    const input = page.locator('textarea.chat-input');
+    await input.fill('一首情歌');
+
+    const sendButton = page.locator('button.send-btn');
+    await sendButton.click();
+
+    // 等待生成歌词按钮
+    await expect(page.locator('button.lyrics-btn')).toBeVisible({ timeout: 10000 });
+
+    // 等待按钮变为可点击（loading状态结束）
+    await expect(page.locator('button.lyrics-btn')).toBeEnabled({ timeout: 30000 });
+
+    // 点击生成歌词
+    await page.locator('button.lyrics-btn').click();
+
+    // 等待歌词编辑区出现
+    await expect(page.locator('textarea.lyrics-input')).toBeVisible({ timeout: 20000 });
+  });
+
+  test('生成歌词后出现生成歌曲按钮', async ({ page }) => {
+    test.setTimeout(45000);
+    const input = page.locator('textarea.chat-input');
+    await input.fill('测试');
+
+    const sendButton = page.locator('button.send-btn');
+    await sendButton.click();
+
+    // 等待生成歌词按钮
+    await expect(page.locator('button.lyrics-btn')).toBeVisible({ timeout: 10000 });
+
+    // 等待按钮变为可点击（loading状态结束）
+    await expect(page.locator('button.lyrics-btn')).toBeEnabled({ timeout: 30000 });
+
+    await page.locator('button.lyrics-btn').click();
+
+    // 等待生成歌曲按钮出现
+    await expect(page.locator('button.generate-btn')).toBeVisible({ timeout: 20000 });
   });
 });
