@@ -33,7 +33,16 @@ def chat():
         messages = [{"role": "user", "content": user_message}]
         logger.info(f"Chat request: {user_message[:50]}...")
         result = client.chat(messages)
-        return jsonify(result)
+
+        # 返回简化的响应格式给前端
+        content = result.get("choices", [{}])[0].get("message", {}).get("content", "好的，我来帮你创作这首歌")
+        return jsonify({
+            "choices": [{
+                "message": {
+                    "content": content
+                }
+            }]
+        })
 
     except Exception as e:
         logger.error(f"Chat error: {e}")
