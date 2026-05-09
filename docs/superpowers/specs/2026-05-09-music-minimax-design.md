@@ -156,5 +156,5 @@ app/
 - 对话模型：MiniMax-M2.7-highspeed（OpenAI 兼容格式）
 - 歌词模型：lyrics_generation
 - 歌曲模型：music-2.6（异步，轮询机制）
-- API Key：sk-cp-LgTiOgPQdjuhkRMDIahYhL3k-Tkmjh3DzqYrn7X7FjiIeHsPdIGEs3iiQtDh_QzpF3M6AYtk8l4qU8iwdN3fQbLjX3IAI5DsIl1Qw1nFOVPabO0kyuVX5Y4
+- API Key：配置在 `.env.local` 中（`MINIMAX_API_KEY`），永不写入代码或文档
 - 文档入口：https://platform.minimaxi.com/docs/api-reference/api-overview
