@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY}
+      - MINIMAX_API_BASE=${MINIMAX_API_BASE:-https://api.minimaxi.com}
+      - MAX_DAILY_SONGS=5
+    volumes:
+      - ./public/songs:/app/public/songs
+      - ./logs:/app/logs
+    command: npm run dev

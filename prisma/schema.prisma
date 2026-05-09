@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String      @id @default(cuid())
+  email          String      @unique
+  passwordHash   String
+  dailySongCount Int        @default(0)
+  dailyResetAt   DateTime   @default(now())
+  createdAt      DateTime   @default(now())
+  songs          SongTask[]
+  tokenUsage     TokenUsage[]
+}
+
+model SongTask {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  status           String    // pending | processing | done | failed
+  prompt           String
+  lyrics           String?
+  lyricsCacheKey   String?
+  musicUrl         String?   // /songs/{uuid}.mp3
+  error            String?
+  progress         Int       @default(0)
+  estimatedSeconds Int?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model LyricsCache {
+  id        String   @id @default(cuid())
+  cacheKey  String   @unique  // MD5(prompt)
+  prompt    String
+  lyrics    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model TokenUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String   // chat | lyrics | music
+  tokens    Int
+  createdAt DateTime @default(now())
+}
