@@ -2,7 +2,7 @@
 
 ## 概述
 
-基于 MiniMax API 的 AI 歌曲生成网页应用，用户通过对话描述需求，系统生成歌词，用户确认后异步生成歌曲并支持播放下载。
+基于 MiniMax API 的 AI 歌曲生成网页应用，用户通过对话描述需求，系统生成歌词，用户确认后生成歌曲并支持播放下载（同步调用，直接返回 audio_url）。
 
 ## 架构决策
 
@@ -40,7 +40,7 @@ model SongTask {
   id               String    @id @default(cuid())
   userId           String
   user             User      @relation(fields: [userId], references: [id])
-  status           String    // pending | processing | done | failed
+  status           String    @default("done") // done | failed（同步API，无任务队列）
   prompt           String
   lyrics           String?
   lyricsCacheKey   String?
@@ -78,17 +78,15 @@ model TokenUsage {
 | `/api/auth/[...nextauth]` | GET/POST | NextAuth 处理登录/登出 |
 | `/api/chat` | POST | 对话理解 |
 | `/api/lyrics` | POST | 生成歌词（先查缓存，再调 API） |
-| `/api/music/generate` | POST | 创建歌曲生成任务 |
-| `/api/music/status/[taskId]` | GET | 轮询任务状态 |
+| `/api/music/generate` | POST | 生成歌曲（同步，直接返回 audio_url） |
 | `/api/songs` | GET | 获取当前用户所有歌曲 |
 | `/api/songs/[taskId]` | DELETE | 删除歌曲及本地文件 |
 | `/api/songs/[taskId]/regenerate` | POST | 重新生成（复用歌词） |
 | `/api/admin/usage` | GET | 查看消耗统计 |
 
-### 任务状态流转
+### 歌曲生成流程
 ```
-pending → processing → done
-                   → failed
+用户确认歌词 → POST /api/music/generate → 同步返回 audio_url → 下载到本地 → 返回 musicUrl
 ```
 
 ## 前端页面结构
@@ -107,7 +105,6 @@ app/
 │   ├── chat/route.ts
 │   ├── lyrics/route.ts
 │   ├── music/generate/route.ts
-│   ├── music/status/[taskId]/route.ts
 │   └── songs/route.ts
 └── components/
     ├── ui/                     # shadcn/ui
@@ -155,6 +152,6 @@ app/
 
 - 对话模型：MiniMax-M2.7-highspeed（OpenAI 兼容格式）
 - 歌词模型：lyrics_generation
-- 歌曲模型：music-2.6（异步，轮询机制）
+- 歌曲模型：music-2.6（同步 API，直接返回 audio_url）
 - API Key：配置在 `.env.local` 中（`MINIMAX_API_KEY`），永不写入代码或文档
 - 文档入口：https://platform.minimaxi.com/docs/api-reference/api-overview
