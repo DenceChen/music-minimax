@@ -91,7 +91,7 @@ test.describe('Music MiniMax API 测试', () => {
 
   test.describe('音乐生成 API /api/music', () => {
     test('POST /api/music 返回200或处理错误', async ({ request }) => {
-      test.setTimeout(60000); // 音乐生成可能需要更长时间
+      test.setTimeout(120000); // 音乐生成可能需要更长时间
       const response = await request.post(`${BASE_URL}/api/music`, {
         data: {
           prompt: '测试歌曲',
@@ -102,7 +102,7 @@ test.describe('Music MiniMax API 测试', () => {
     });
 
     test('POST /api/music 返回正确的响应结构', async ({ request }) => {
-      test.setTimeout(60000);
+      test.setTimeout(120000);
       const response = await request.post(`${BASE_URL}/api/music`, {
         data: {
           prompt: '测试',

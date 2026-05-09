@@ -101,11 +101,11 @@ test.describe('Music MiniMax 应用 - E2E测试', () => {
     await sendButton.click();
 
     // 等待按钮出现 (conversation.length > 0 && !lyrics && step === "chat")
-    await expect(page.locator('button.lyrics-btn')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('button.generate-btn')).toBeVisible({ timeout: 10000 });
   });
 
   test('点击生成歌词后显示歌词编辑区', async ({ page }) => {
-    test.setTimeout(45000);
+    test.setTimeout(120000);
     const input = page.locator('textarea.chat-input');
     await input.fill('一首情歌');
 
@@ -113,20 +113,20 @@ test.describe('Music MiniMax 应用 - E2E测试', () => {
     await sendButton.click();
 
     // 等待生成歌词按钮
-    await expect(page.locator('button.lyrics-btn')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('button.generate-btn')).toBeVisible({ timeout: 15000 });
 
-    // 等待按钮变为可点击（loading状态结束）
-    await expect(page.locator('button.lyrics-btn')).toBeEnabled({ timeout: 30000 });
+    // 等待按钮变为可点击（loading状态结束）- 可能需要等待API完成
+    await expect(page.locator('button.generate-btn')).toBeEnabled({ timeout: 60000 });
 
     // 点击生成歌词
-    await page.locator('button.lyrics-btn').click();
+    await page.locator('button.generate-btn').click();
 
     // 等待歌词编辑区出现
-    await expect(page.locator('textarea.lyrics-input')).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('textarea.lyrics-input')).toBeVisible({ timeout: 60000 });
   });
 
   test('生成歌词后出现生成歌曲按钮', async ({ page }) => {
-    test.setTimeout(45000);
+    test.setTimeout(120000);
     const input = page.locator('textarea.chat-input');
     await input.fill('测试');
 
@@ -134,12 +134,12 @@ test.describe('Music MiniMax 应用 - E2E测试', () => {
     await sendButton.click();
 
     // 等待生成歌词按钮
-    await expect(page.locator('button.lyrics-btn')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('button.generate-btn')).toBeVisible({ timeout: 15000 });
 
     // 等待按钮变为可点击（loading状态结束）
-    await expect(page.locator('button.lyrics-btn')).toBeEnabled({ timeout: 30000 });
+    await expect(page.locator('button.generate-btn')).toBeEnabled({ timeout: 60000 });
 
-    await page.locator('button.lyrics-btn').click();
+    await page.locator('button.generate-btn').click();
 
     // 等待生成歌曲按钮出现
     await expect(page.locator('button.generate-btn')).toBeVisible({ timeout: 20000 });

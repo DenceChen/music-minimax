@@ -7,7 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -17,6 +21,8 @@ client = MiniMaxClient()
 
 @app.route("/api/health", methods=["GET"])
 def health():
+    logger.info("[Health] 健康检查请求")
+    logger.info("[Health] 健康检查成功")
     return jsonify({"status": "ok"})
 
 
@@ -33,6 +39,7 @@ def chat():
         messages = [{"role": "user", "content": user_message}]
         logger.info(f"Chat request: {user_message[:50]}...")
         result = client.chat(messages)
+        logger.info(f"Chat response success")
 
         # 返回简化的响应格式给前端
         content = result.get("choices", [{}])[0].get("message", {}).get("content", "好的，我来帮你创作这首歌")
@@ -61,6 +68,7 @@ def lyrics():
 
         logger.info(f"Lyrics request: {prompt[:50]}...")
         result = client.generate_lyrics(prompt)
+        logger.info(f"Lyrics response success")
         return jsonify(result)
 
     except Exception as e:
@@ -81,6 +89,7 @@ def music():
 
         logger.info(f"Music request: prompt={prompt[:50]}..., lyrics_length={len(lyrics)}")
         result = client.generate_music(prompt, lyrics)
+        logger.info(f"Music response success")
         return jsonify(result)
 
     except Exception as e:
