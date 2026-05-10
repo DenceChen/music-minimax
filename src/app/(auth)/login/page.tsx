@@ -27,7 +27,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError('Invalid email or password')
       } else {
-        router.push('/chat')
+        router.push('/zh/chat')
         router.refresh()
       }
     } catch (err) {
@@ -84,7 +84,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <Link
-              href="/register"
+              href="/zh/register"
               className="text-blue-600 hover:text-blue-500 text-sm"
             >
               Don&apos;t have an account? Sign up

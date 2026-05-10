@@ -44,7 +44,7 @@ export default function RegisterPage() {
         return
       }
 
-      router.push('/login?registered=true')
+      router.push('/zh/login?registered=true')
     } catch (err) {
       setError('An error occurred. Please try again.')
     } finally {
@@ -109,7 +109,7 @@ export default function RegisterPage() {
 
           <div className="text-center">
             <Link
-              href="/login"
+              href="/zh/login"
               className="text-blue-600 hover:text-blue-500 text-sm"
             >
               Already have an account? Sign in
