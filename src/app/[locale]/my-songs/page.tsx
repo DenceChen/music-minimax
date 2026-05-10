@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { useLocale } from 'next-intl'
 import WavePlayer from '@/components/player/WavePlayer'
 import Link from 'next/link'
 
@@ -16,6 +17,7 @@ interface Song {
 }
 
 export default function MySongsPage() {
+  const locale = useLocale()
   const { data: session } = useSession()
   const [songs, setSongs] = useState<Song[]>([])
   const [loading, setLoading] = useState(true)
@@ -78,7 +80,6 @@ export default function MySongsPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          // Update the song in the list with new musicUrl
           setSongs((prev) =>
             prev.map((s) =>
               s.id === songId
@@ -109,7 +110,7 @@ export default function MySongsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">My Songs</h1>
         <Link
-          href="/chat"
+          href={`/${locale}/chat`}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Create New Song
@@ -124,7 +125,7 @@ export default function MySongsPage() {
           <p className="mt-4 text-gray-600">No songs yet</p>
           <p className="text-sm text-gray-500 mt-1">Start by creating your first song in the Chat page.</p>
           <Link
-            href="/chat"
+            href={`/${locale}/chat`}
             className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Create Song
@@ -137,7 +138,7 @@ export default function MySongsPage() {
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <p className="text-sm text-gray-500">
-                    {new Date(song.createdAt).toLocaleDateString('zh-CN', {
+                    {new Date(song.createdAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : 'en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',

@@ -4,23 +4,24 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import LanguageSelector from '@/components/layout/LanguageSelector'
 
-export default function MainLayout({
+export default function LocaleLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const locale = useLocale()
   const { data: session, status } = useSession()
   const router = useRouter()
   const t = useTranslations('nav')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/login')
+      router.push(`/${locale}/login`)
     }
-  }, [status, router])
+  }, [status, router, locale])
 
   if (status === 'loading' || !session) {
     return (
@@ -37,19 +38,19 @@ export default function MainLayout({
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link href="/chat" className="text-xl font-bold text-blue-600">
+                <Link href={`/${locale}/chat`} className="text-xl font-bold text-blue-600">
                   Music MiniMax
                 </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
-                  href="/chat"
+                  href={`/${locale}/chat`}
                   className="border-transparent text-gray-500 hover:border-blue-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   {t('chat')}
                 </Link>
                 <Link
-                  href="/my-songs"
+                  href={`/${locale}/my-songs`}
                   className="border-transparent text-gray-500 hover:border-blue-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   {t('mySongs')}
@@ -59,13 +60,13 @@ export default function MainLayout({
             <div className="flex items-center space-x-4">
               <LanguageSelector />
               <Link
-                href="/settings"
+                href={`/${locale}/settings`}
                 className="text-gray-500 hover:text-gray-700 text-sm font-medium"
               >
                 {t('settings')}
               </Link>
               <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
+                onClick={() => signOut({ callbackUrl: `/${locale}/login` })}
                 className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 {t('signOut')}
