@@ -4,6 +4,8 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+import LanguageSelector from '@/components/layout/LanguageSelector'
 
 export default function MainLayout({
   children,
@@ -12,6 +14,7 @@ export default function MainLayout({
 }) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('nav')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -19,16 +22,12 @@ export default function MainLayout({
     }
   }, [status, router])
 
-  if (status === 'loading') {
+  if (status === 'loading' || !session) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
       </div>
     )
-  }
-
-  if (!session) {
-    return null
   }
 
   return (
@@ -47,25 +46,30 @@ export default function MainLayout({
                   href="/chat"
                   className="border-transparent text-gray-500 hover:border-blue-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
-                  Chat
+                  {t('chat')}
                 </Link>
                 <Link
                   href="/my-songs"
                   className="border-transparent text-gray-500 hover:border-blue-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
-                  My Songs
+                  {t('mySongs')}
                 </Link>
               </div>
             </div>
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <button
-                  onClick={() => signOut({ callbackUrl: '/login' })}
-                  className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                >
-                  Sign out
-                </button>
-              </div>
+            <div className="flex items-center space-x-4">
+              <LanguageSelector />
+              <Link
+                href="/settings"
+                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+              >
+                {t('settings')}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/login' })}
+                className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
+                {t('signOut')}
+              </button>
             </div>
           </div>
         </div>

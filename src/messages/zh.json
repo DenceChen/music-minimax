@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "chat": "对话",
+    "mySongs": "我的歌曲",
+    "settings": "设置",
+    "signOut": "退出登录"
+  },
+  "common": {
+    "welcome": "欢迎使用 Music MiniMax",
+    "welcomeSubtitle": "告诉我你想创作什么样的歌曲",
+    "loading": "加载中...",
+    "error": "出错了",
+    "retry": "重试",
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "chat": {
+    "placeholder": "告诉我你想创作什么样的歌曲...",
+    "send": "发送",
+    "pleaseWait": "请稍候...",
+    "lyricsGenerated": "我已为你生成歌词。点击「生成歌曲」来创作音乐！",
+    "songReady": "歌曲已准备好！向下滚动播放！",
+    "generatingLyrics": "正在生成歌词...",
+    "generatingSong": "正在生成歌曲...",
+    "generateSong": "生成歌曲",
+    "generatedLyrics": "已生成的歌词",
+    "yourSongReady": "你的歌曲已准备好！"
+  },
+  "mySongs": {
+    "title": "我的作品",
+    "noSongs": "还没有歌曲，继续创作吧！",
+    "delete": "删除",
+    "play": "播放",
+    "regenerate": "重新生成"
+  },
+  "settings": {
+    "title": "设置",
+    "modelSelection": "模型选择",
+    "modelSelectionDesc": "选择用于对话的 AI 模型",
+    "apiKeySetting": "API Key 设置",
+    "apiKeySettingDesc": "设置你自己的 MiniMax API Key（将覆盖环境变量）",
+    "apiKeyPlaceholder": "输入你的 API Key",
+    "saved": "设置已保存",
+    "selectModel": "选择模型"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "signIn": "登录",
+    "signUp": "注册",
+    "noAccount": "还没有账号？",
+    "hasAccount": "已有账号？"
+  }
+}

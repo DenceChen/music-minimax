@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "chat": "チャット",
+    "mySongs": "マイソング",
+    "settings": "設定",
+    "signOut": "ログアウト"
+  },
+  "common": {
+    "welcome": "Music MiniMaxへようこそ",
+    "welcomeSubtitle": "どんな曲を作りたいか教えてください",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "retry": "再試行",
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "chat": {
+    "placeholder": "どんな曲を作りたいか教えてください...",
+    "send": "送信",
+    "pleaseWait": "お待ちください...",
+    "lyricsGenerated": "歌詞を生成しました。「曲を生成」をクリックして音楽を作成してください！",
+    "songReady": "曲が準備できました！スクロールして再生してください！",
+    "generatingLyrics": "歌詞を生成中...",
+    "generatingSong": "曲を生成中...",
+    "generateSong": "曲を生成",
+    "generatedLyrics": "生成された歌詞",
+    "yourSongReady": "曲が準備できました！"
+  },
+  "mySongs": {
+    "title": "マイソング",
+    "noSongs": "まだ曲がありません、ぜひ作成してください！",
+    "delete": "削除",
+    "play": "再生",
+    "regenerate": "再生成"
+  },
+  "settings": {
+    "title": "設定",
+    "modelSelection": "モデル選択",
+    "modelSelectionDesc": "チャットに使用するAIモデルを選択",
+    "apiKeySetting": "API Key設定",
+    "apiKeySettingDesc": "自分のMiniMax API Keyを設定（環境変数を上書きします）",
+    "apiKeyPlaceholder": "API Keyを入力",
+    "saved": "設定が保存されました",
+    "selectModel": "モデルを選択"
+  },
+  "auth": {
+    "login": "ログイン",
+    "register": "登録",
+    "email": "メール",
+    "password": "パスワード",
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "hasAccount": "すでにアカウントをお持ちですか？"
+  }
+}

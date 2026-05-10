@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "chat": "Chat",
+    "mySongs": "My Songs",
+    "settings": "Settings",
+    "signOut": "Sign Out"
+  },
+  "common": {
+    "welcome": "Welcome to Music MiniMax",
+    "welcomeSubtitle": "Tell me what kind of song you want to create",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "chat": {
+    "placeholder": "Tell me what kind of song you want to create...",
+    "send": "Send",
+    "pleaseWait": "Please wait...",
+    "lyricsGenerated": "I've generated some lyrics for you. Click \"Generate Song\" to create the music!",
+    "songReady": "Your song is ready! Scroll down to play it!",
+    "generatingLyrics": "Generating lyrics...",
+    "generatingSong": "Generating song...",
+    "generateSong": "Generate Song",
+    "generatedLyrics": "Generated Lyrics",
+    "yourSongReady": "Your Song is Ready!"
+  },
+  "mySongs": {
+    "title": "My Songs",
+    "noSongs": "No songs yet, keep creating!",
+    "delete": "Delete",
+    "play": "Play",
+    "regenerate": "Regenerate"
+  },
+  "settings": {
+    "title": "Settings",
+    "modelSelection": "Model Selection",
+    "modelSelectionDesc": "Select the AI model for chat",
+    "apiKeySetting": "API Key Setting",
+    "apiKeySettingDesc": "Set your own MiniMax API Key (will override env variable)",
+    "apiKeyPlaceholder": "Enter your API Key",
+    "saved": "Settings saved",
+    "selectModel": "Select model"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  }
+}

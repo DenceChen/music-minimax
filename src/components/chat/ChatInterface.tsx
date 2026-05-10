@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 import WavePlayer from '@/components/player/WavePlayer'
 
 interface Message {
@@ -16,6 +17,8 @@ interface SongResult {
 
 export default function ChatPage() {
   const { data: session } = useSession()
+  const t = useTranslations('chat')
+  const tCommon = useTranslations('common')
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -73,7 +76,7 @@ export default function ChatPage() {
         throw new Error(chatData.error || 'Chat failed')
       }
 
-      const assistantMessage = chatData.data?.choices?.[0]?.message?.content || 'Sorry, I could not understand that.'
+      const assistantMessage = chatData.data?.choices?.[0]?.message?.content || tCommon('error')
 
       setMessages((prev) => [...prev, { role: 'assistant', content: assistantMessage }])
 
@@ -92,7 +95,7 @@ export default function ChatPage() {
             setShowLyrics(true)
             setMessages((prev) => [
               ...prev,
-              { role: 'assistant', content: 'I\'ve generated some lyrics for you. Click "Generate Song" to create the music!' },
+              { role: 'assistant', content: t('lyricsGenerated') },
             ])
           }
         }
@@ -100,7 +103,7 @@ export default function ChatPage() {
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: error instanceof Error ? error.message : 'Sorry, an error occurred. Please try again.' },
+        { role: 'assistant', content: error instanceof Error ? error.message : tCommon('error') },
       ])
     } finally {
       setIsLoading(false)
@@ -138,10 +141,10 @@ export default function ChatPage() {
       setShowLyrics(false)
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Your song is ready! Scroll down to play it!' },
+        { role: 'assistant', content: t('songReady') },
       ])
     } catch (error) {
-      setSongError(error instanceof Error ? error.message : 'Failed to generate song. Please try again.')
+      setSongError(error instanceof Error ? error.message : tCommon('error'))
     } finally {
       setIsLoading(false)
     }
@@ -153,8 +156,8 @@ export default function ChatPage() {
         <div className="h-96 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 && (
             <div className="text-center text-gray-500 py-8">
-              <p className="text-lg">Welcome to Music MiniMax!</p>
-              <p className="text-sm mt-2">Tell me what kind of song you want to create.</p>
+              <p className="text-lg">{tCommon('welcome')}</p>
+              <p className="text-sm mt-2">{tCommon('welcomeSubtitle')}</p>
             </div>
           )}
 
@@ -194,7 +197,7 @@ export default function ChatPage() {
         {showLyrics && currentLyrics && (
           <div className="border-t p-4 bg-blue-50">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="font-semibold text-gray-700">Generated Lyrics:</h3>
+              <h3 className="font-semibold text-gray-700">{t('generatedLyrics')}:</h3>
               <button
                 onClick={() => setShowLyrics(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -213,7 +216,7 @@ export default function ChatPage() {
                 disabled={isLoading}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
-                {isLoading ? 'Generating...' : 'Generate Song'}
+                {isLoading ? t('generatingSong') : t('generateSong')}
               </button>
             </div>
           </div>
@@ -222,7 +225,7 @@ export default function ChatPage() {
         {/* Current Song Player */}
         {currentSong && currentSong.musicUrl && (
           <div className="border-t p-4 bg-green-50">
-            <h3 className="font-semibold text-gray-700 mb-3">Your Song is Ready!</h3>
+            <h3 className="font-semibold text-gray-700 mb-3">{t('yourSongReady')}</h3>
             <WavePlayer url={currentSong.musicUrl} />
           </div>
         )}
@@ -235,7 +238,7 @@ export default function ChatPage() {
               onClick={() => setSongError(null)}
               className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
-              Try Again
+              {tCommon('retry')}
             </button>
           </div>
         )}
@@ -247,7 +250,7 @@ export default function ChatPage() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Tell me what kind of song you want to create..."
+              placeholder={t('placeholder')}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isLoading}
             />
@@ -256,7 +259,7 @@ export default function ChatPage() {
               disabled={isLoading || !input.trim() || isDebouncing}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isDebouncing ? 'Please wait...' : 'Send'}
+              {isDebouncing ? t('pleaseWait') : t('send')}
             </button>
           </form>
         </div>
