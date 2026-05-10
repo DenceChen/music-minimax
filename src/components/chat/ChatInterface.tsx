@@ -23,7 +23,9 @@ export default function ChatPage() {
   const [currentLyrics, setCurrentLyrics] = useState('')
   const [currentSong, setCurrentSong] = useState<SongResult | null>(null)
   const [songError, setSongError] = useState<string | null>(null)
+  const [isDebouncing, setIsDebouncing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const lastSubmitRef = useRef<number>(0)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -35,6 +37,14 @@ export default function ChatPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Debounce: 1 second cooldown
+    const now = Date.now()
+    if (now - lastSubmitRef.current < 1000) return
+    lastSubmitRef.current = now
+    setIsDebouncing(true)
+    setTimeout(() => setIsDebouncing(false), 1000)
+
     if (!input.trim() || isLoading) return
 
     const userMessage = input.trim()
@@ -243,10 +253,10 @@ export default function ChatPage() {
             />
             <button
               type="submit"
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || !input.trim() || isDebouncing}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send
+              {isDebouncing ? 'Please wait...' : 'Send'}
             </button>
           </form>
         </div>
