@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { email, password } = body
+    const { email, password, code } = body
 
     if (!email || typeof email !== 'string') {
       return NextResponse.json(
@@ -23,6 +23,13 @@ export async function POST(request: NextRequest) {
     if (!password || typeof password !== 'string') {
       return NextResponse.json(
         { success: false, error: 'Password is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!code || typeof code !== 'string') {
+      return NextResponse.json(
+        { success: false, error: 'Verification code is required' },
         { status: 400 }
       )
     }
@@ -40,6 +47,27 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Verify the code
+    const verification = await prisma.verificationCode.findFirst({
+      where: {
+        email,
+        code,
+        expiresAt: { gt: new Date() }
+      }
+    })
+
+    if (!verification) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid or expired verification code' },
+        { status: 400 }
+      )
+    }
+
+    // Delete used code
+    await prisma.verificationCode.deleteMany({
+      where: { email }
+    })
 
     log.info({
       requestId,
