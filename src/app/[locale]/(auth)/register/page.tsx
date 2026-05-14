@@ -2,17 +2,52 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useLocale } from 'next-intl'
+import Link from 'next/link'
 
-export default function LocaleRegisterPage() {
-  const router = useRouter()
+export default function RegisterPage() {
   const locale = useLocale()
+  const router = useRouter()
+  const [step, setStep] = useState<'email' | 'code'>('email')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [codeSent, setCodeSent] = useState(false)
+
+  const handleSendCode = async () => {
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/auth/verification/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to send code')
+        return
+      }
+
+      setCodeSent(true)
+      setStep('code')
+    } catch (err) {
+      setError('Failed to send verification code')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,93 +58,143 @@ export default function LocaleRegisterPage() {
       return
     }
 
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
+    if (!code || code.length !== 6) {
+      setError('Please enter the 6-digit verification code')
+      return
+    }
+
     setLoading(true)
 
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, code }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
+        setError(data.error || 'Registration failed')
+        return
       }
 
-      router.push(`/${locale}/login`)
+      router.push(`/${locale}/login?registered=true`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError('An error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-md">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <input
-                type="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center text-2xl" style={{
+            background: 'linear-gradient(135deg, var(--gradient-start), var(--gradient-end))',
+            boxShadow: 'var(--shadow-glow)'
+          }}>
+            🎵
           </div>
+          <h1 className="auth-title">Create Account</h1>
+          <p className="auth-subtitle">
+            {step === 'email' ? 'Enter your email to get started' : 'Enter the verification code'}
+          </p>
+        </div>
 
-          <div>
+        {error && (
+          <div className="mb-4 p-3 rounded-lg text-center text-sm" style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: 'var(--error)'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {step === 'email' ? (
+          <div className="space-y-4">
+            <input
+              type="email"
+              required
+              className="auth-input"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <button
+              onClick={handleSendCode}
+              disabled={loading}
+              className="auth-btn"
+            >
+              {loading ? 'Sending...' : 'Send Verification Code'}
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              required
+              className="auth-input text-center text-2xl tracking-widest font-mono"
+              placeholder="Enter 6-digit code"
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              maxLength={6}
+            />
+
+            <input
+              type="password"
+              required
+              className="auth-input"
+              placeholder="Password (min 6 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <input
+              type="password"
+              required
+              className="auth-input"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="auth-btn"
             >
-              {loading ? 'Creating account...' : 'Sign up'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
-          </div>
 
-          <div className="text-center">
-            <Link
-              href={`/${locale}/login`}
-              className="text-blue-600 hover:text-blue-500 text-sm"
+            <button
+              type="button"
+              onClick={() => {
+                setStep('email')
+                setCode('')
+                setDemoCode('')
+              }}
+              className="w-full text-center text-sm py-2"
+              style={{ color: 'var(--text-muted)' }}
             >
-              Already have an account? Sign in
-            </Link>
-          </div>
-        </form>
+              Use a different email
+            </button>
+          </form>
+        )}
+
+        <div className="text-center mt-6">
+          <span style={{ color: 'var(--text-muted)' }}>Already have an account? </span>
+          <Link href={`/${locale}/login`} className="auth-link">
+            Sign in
+          </Link>
+        </div>
       </div>
     </div>
   )

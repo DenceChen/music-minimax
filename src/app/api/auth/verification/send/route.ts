@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Generate a random 6-digit code
+// Generate a cryptographically secure random 6-digit code
 function generateCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  const array = new Uint32Array(1)
+  crypto.getRandomValues(array)
+  return (array[0] % 900000 + 100000).toString()
 }
 
 // POST - Send verification code
@@ -43,16 +45,11 @@ export async function POST(req: NextRequest) {
     })
 
     // In production, you would send the code via email/SMS here
-    // For demo purposes, we'll log it (in real app, use a proper email service)
     console.log(`[VERIFICATION CODE] Email: ${email}, Code: ${code}`)
 
-    // Return success (in demo mode, also return the code for testing)
-    // Remove this line in production!
     return NextResponse.json({
       success: true,
-      message: 'Verification code sent',
-      // DEMO ONLY: Return code for testing (remove in production!)
-      demoCode: code
+      message: 'Verification code sent'
     })
   } catch (error) {
     console.error('Failed to send verification code:', error)

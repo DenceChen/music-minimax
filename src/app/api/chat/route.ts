@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { chatCompletion } from '@/lib/api/minimax'
 import { prisma } from '@/lib/prisma'
 import { logger, generateRequestId } from '@/lib/logger'
@@ -8,6 +10,15 @@ const log = logger
 export async function POST(request: NextRequest) {
   const requestId = generateRequestId()
   const startTime = Date.now()
+
+  // Check authentication
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json(
+      { success: false, error: 'Authentication required' },
+      { status: 401 }
+    )
+  }
 
   try {
     const body = await request.json()
@@ -41,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.tokenUsage.create({
       data: {
-        userId: 'anonymous',
+        userId: session.user.id,
         action: 'chat',
         tokens: response.usage?.total_tokens || 0,
       },
