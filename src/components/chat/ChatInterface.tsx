@@ -87,12 +87,37 @@ export default function ChatPage() {
     }
   }
 
+  // Generate short title from first user message
+  const generateTitleFromMessage = (content: string): string => {
+    const cleaned = content.replace(/[^一-龥a-zA-Z0-9\s]/g, '').trim()
+    const words = cleaned.split(/\s+/).slice(0, 6)
+    const title = words.join(' ')
+    return title.length > 20 ? title.substring(0, 20) + '...' : title || '新对话'
+  }
+
+  // Update session title in sidebar and database
+  const updateSessionTitle = async (sessionId: string, title: string) => {
+    try {
+      await fetch(`/api/chat/sessions/${sessionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title })
+      })
+      // Update local state
+      setSessions(prev => prev.map(s =>
+        s.id === sessionId ? { ...s, title } : s
+      ))
+    } catch (error) {
+      console.error('Failed to update session title:', error)
+    }
+  }
+
   const createNewSession = async () => {
     try {
       const response = await fetch('/api/chat/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: '新对话' })
+        body: JSON.stringify({ title: '' })
       })
       if (response.ok) {
         const data = await response.json()
@@ -176,6 +201,10 @@ export default function ChatPage() {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
     setSongError(null)
+
+    // Update session title after first user message
+    const title = generateTitleFromMessage(userMessage)
+    updateSessionTitle(currentSessionId!, title)
 
     try {
       const chatResponse = await fetch('/api/chat', {
