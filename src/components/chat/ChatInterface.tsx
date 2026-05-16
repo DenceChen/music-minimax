@@ -643,7 +643,7 @@ export default function ChatPage() {
         isOpen={deleteDialog.open}
         title={t('deleteSession')}
         message={t('confirmDeleteSession', { title: deleteDialog.title })}
-        confirmText={tCommon('cancel')}
+        confirmText={t('deleteSession')}
         cancelText={tCommon('cancel')}
         destructive
         onConfirm={deleteSession}
