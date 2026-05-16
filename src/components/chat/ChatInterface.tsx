@@ -160,12 +160,22 @@ export default function ChatPage() {
   }
 
   const loadSession = (session: ChatSession) => {
-    // Guard: ensure session exists and has messages
-    if (!session?.id) return
-    console.log('[Chat] Loading session:', session.id, 'messages count:', session.messages?.length || 0)
+    // Guard: ensure session exists
+    if (!session?.id) {
+      console.log('[Chat] loadSession called with invalid session:', session)
+      return
+    }
+    console.log('[Chat] loadSession called:', {
+      sessionId: session.id,
+      title: session.title,
+      hasMessages: !!session.messages,
+      messagesCount: session.messages?.length || 0,
+      messages: session.messages
+    })
     setCurrentSessionId(session.id)
-    // Defensive: ensure session.messages exists before mapping
-    setMessages(session.messages?.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content })) || [])
+    const msgs = session.messages?.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content })) || []
+    console.log('[Chat] Setting messages:', msgs.length, msgs)
+    setMessages(msgs)
     setShowLyrics(false)
     setCurrentSong(null)
   }
@@ -432,7 +442,7 @@ export default function ChatPage() {
 
         {/* Messages */}
         <div className="flex-1 min-h-0 overflow-y-auto p-4">
-          {messages.length === 0 ? (
+          {console.log('[Chat] Rendering messages:', messages.length, 'currentSessionId:', currentSessionId) || messages.length === 0 ? (
             <div className="welcome-premium">
               <div className="welcome-glow" />
               <div className="welcome-icon-premium" />
