@@ -2305,6 +2305,13 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(10px);
 }
 
+/* Mobile: hide log panel on small screens */
+@media (max-width: 480px) {
+  .log-panel {
+    display: none;
+  }
+}
+
 .log-header {
   display: flex;
   justify-content: space-between;
