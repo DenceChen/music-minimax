@@ -15,13 +15,16 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
+  const isMountedRef = useRef(true)
 
   useEffect(() => {
+    isMountedRef.current = true
     if (!containerRef.current) return
 
     // Destroy previous instance
     if (wavesurferRef.current) {
       wavesurferRef.current.destroy()
+      wavesurferRef.current = null
     }
 
     const wavesurfer = WaveSurfer.create({
@@ -39,8 +42,10 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
     wavesurferRef.current = wavesurfer
 
     wavesurfer.on('ready', () => {
-      setIsLoading(false)
-      setDuration(wavesurfer.getDuration())
+      if (isMountedRef.current) {
+        setIsLoading(false)
+        setDuration(wavesurfer.getDuration())
+      }
     })
 
     wavesurfer.on('play', () => setIsPlaying(true))
@@ -58,9 +63,18 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
       setCurrentTime(wavesurfer.getCurrentTime())
     })
 
-    wavesurfer.load(url)
+    // Load with error handling for abort
+    try {
+      wavesurfer.load(url)
+    } catch (e) {
+      // Ignore load errors during component unmount
+      if (e instanceof Error && (e.name === 'AbortError' || e.message?.includes('aborted'))) {
+        // Ignore - component is unmounting
+      }
+    }
 
     return () => {
+      isMountedRef.current = false
       try {
         wavesurfer.destroy()
       } catch (e) {
@@ -69,13 +83,10 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
           if (e.name === 'AbortError' || e.name === 'DOMException') {
             return
           }
-          // Also check message for AbortError
           if (e.message?.includes('aborted') || e.message?.includes('abort')) {
             return
           }
         }
-        // Suppress all errors during cleanup to prevent console noise
-        console.debug('WavePlayer cleanup:', e)
       }
     }
   }, [url, onEnded])
