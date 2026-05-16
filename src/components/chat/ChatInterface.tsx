@@ -112,8 +112,12 @@ export default function ChatPage() {
   }
 
   const loadSession = (session: ChatSession) => {
+    // Guard: ensure session exists and has messages
+    if (!session?.id) return
+    console.log('[Chat] Loading session:', session.id, 'messages count:', session.messages?.length || 0)
     setCurrentSessionId(session.id)
-    setMessages(session.messages.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content })))
+    // Defensive: ensure session.messages exists before mapping
+    setMessages(session.messages?.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content })) || [])
     setShowLyrics(false)
     setCurrentSong(null)
   }
@@ -368,7 +372,7 @@ export default function ChatPage() {
 
         {/* Messages */}
         <div className="flex-1 min-h-0 overflow-y-auto p-4">
-          {messages.length === 0 ? (
+          {messages.length === 0 && !currentSessionId ? (
             <div className="welcome-premium">
               <div className="welcome-glow" />
               <div className="welcome-icon-premium" />

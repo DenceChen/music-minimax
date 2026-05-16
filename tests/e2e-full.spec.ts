@@ -1,6 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3009';
+const BASE_URL = 'http://localhost:3001';
 
 test.describe('Music MiniMax E2E 完整流程测试', () => {
 
