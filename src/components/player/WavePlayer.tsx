@@ -64,30 +64,14 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
     })
 
     // Load with error handling for abort
-    try {
-      wavesurfer.load(url)
-    } catch (e) {
-      // Ignore load errors during component unmount
-      if (e instanceof Error && (e.name === 'AbortError' || e.message?.includes('aborted'))) {
-        // Ignore - component is unmounting
-      }
-    }
+    wavesurfer.load(url).catch(() => {
+      // Silently ignore - component is unmounting
+    })
 
     return () => {
       isMountedRef.current = false
-      try {
-        wavesurfer.destroy()
-      } catch (e) {
-        // Ignore AbortError and DOMException during cleanup
-        if (e instanceof Error) {
-          if (e.name === 'AbortError' || e.name === 'DOMException') {
-            return
-          }
-          if (e.message?.includes('aborted') || e.message?.includes('abort')) {
-            return
-          }
-        }
-      }
+      // Silently destroy - ignore all errors during cleanup
+      wavesurfer.destroy()
     }
   }, [url, onEnded])
 
