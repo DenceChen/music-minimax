@@ -49,6 +49,7 @@ export default function ChatPage() {
   const [currentSong, setCurrentSong] = useState<SongResult | null>(null)
   const [songError, setSongError] = useState<string | null>(null)
   const [isDebouncing, setIsDebouncing] = useState(false)
+  const [isCreatingSession, setIsCreatingSession] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; sessionId: string | null; title: string }>({
     open: false,
@@ -79,7 +80,22 @@ export default function ChatPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          setSessions(data.data.sessions || [])
+          const loadedSessions = data.data.sessions || []
+          setSessions(loadedSessions)
+          // Auto-select most recent session with messages
+          if (loadedSessions.length > 0 && !currentSessionId) {
+            const mostRecent = loadedSessions[0]
+            if (mostRecent.messages && mostRecent.messages.length > 0) {
+              setCurrentSessionId(mostRecent.id)
+              setMessages(mostRecent.messages.map((m: any) => ({
+                id: m.id,
+                role: m.role as 'user' | 'assistant',
+                content: m.content
+              })))
+              setShowLyrics(false)
+              setCurrentSong(null)
+            }
+          }
         }
       }
     } catch (error) {
@@ -113,6 +129,8 @@ export default function ChatPage() {
   }
 
   const createNewSession = async (): Promise<string | null> => {
+    if (isCreatingSession) return null
+    setIsCreatingSession(true)
     try {
       const response = await fetch('/api/chat/sessions', {
         method: 'POST',
@@ -136,6 +154,8 @@ export default function ChatPage() {
     } catch (error) {
       console.error('Failed to create session:', error)
       return null
+    } finally {
+      setIsCreatingSession(false)
     }
   }
 
@@ -309,7 +329,14 @@ export default function ChatPage() {
       >
         <div className="p-4 border-b" style={{ borderColor: 'rgba(254, 243, 226, 0.06)' }}>
           <button
-            onClick={createNewSession}
+            onClick={() => {
+              // Don't create new session if current one is empty
+              if (currentSessionId && messages.length === 0) {
+                // Focus on the empty current session instead
+                return
+              }
+              createNewSession()
+            }}
             className="w-full generate-btn py-3 text-base"
           >
             + {t('newChat')}
@@ -405,7 +432,7 @@ export default function ChatPage() {
 
         {/* Messages */}
         <div className="flex-1 min-h-0 overflow-y-auto p-4">
-          {messages.length === 0 && !currentSessionId ? (
+          {messages.length === 0 ? (
             <div className="welcome-premium">
               <div className="welcome-glow" />
               <div className="welcome-icon-premium" />
