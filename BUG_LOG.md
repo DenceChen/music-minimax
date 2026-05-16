@@ -54,21 +54,62 @@
 
 ---
 
+## Bug #7 - 日语翻译缺失 (Major) - 新发现
+**页面**: /ja/my-songs (我的歌曲页面当日语时)
+**描述**: 日语 locale 缺少多个翻译 key，导致 60 个 IntlError 错误
+**缺失的翻译 key**:
+- `mySongs.mySongs.loadingSongs`
+- `mySongs.mySongs.title`
+- `mySongs.mySongs.createNew`
+- `mySongs.mySongs.ready`
+- `mySongs.mySongs.viewLyrics`
+- `mySongs.mySongs.delete`
+**状态**: 🔴 New - 需要修复
+
+---
+
+## Bug #8 - 聊天页面消息输入框定位失败 (Major) - 新发现
+**页面**: /zh/chat (聊天页面)
+**描述**: E2E 测试 Test 4 发送消息失败，locator 找不到输入框元素
+**根因分析**:
+- 聊天页面首次加载正常 (body length: 7672)
+- 但在聊天页面导航后尝试发送消息时，locator('textarea, input[type="text"], input:not([type])').first() 找不到元素
+- 这表明聊天输入框可能是动态加载的，或需要特定状态才显示
+**状态**: 🔴 New - 需要调查
+
+---
+
+## Bug #9 - 快速页面切换后输入框丢失 (Major) - 新发现
+**页面**: 聊天页面
+**描述**: Tests 22-24 在聊天页面导航后执行时，输入框 locator.fill() 超时
+- Test 22: 空消息发送测试 - Timeout 30000ms exceeded
+- Test 23: 超长消息测试 - Timeout 30000ms exceeded
+- Test 24: 特殊字符消息测试 - Timeout 30000ms exceeded
+**可能原因**:
+1. 页面状态在某些测试后没有正确恢复
+2. 快速连续点击导致页面进入异常状态
+3. 某些测试改变了页面导航状态
+**状态**: 🔴 New - 需要调查
+
+---
+
 ## 测试执行记录
 
 | 测试时间 | 测试类型 | 测试页面 | 结果 |
 |---------|---------|---------|------|
-| 2026-05-15 | 首页加载 | /zh | PASS |
-| 2026-05-15 | 聊天页 | /zh/chat | PASS |
-| 2026-05-15 | 设置页 | /zh/settings | PASS |
-| 2026-05-15 | 我的歌曲页 | /zh/my-songs | PASS |
-| 2026-05-15 | 移动端布局 | /zh/chat (375x667) | PASS |
-| 2026-05-15 | iPad布局 | /zh/chat (768x1024) | PASS |
-| 2026-05-15 | 语言切换 EN | /en/chat | PASS |
-| 2026-05-15 | 语言切换 JA | /ja/chat | PASS |
-| 2026-05-15 | AI 语言对齐 | /zh/chat | PASS (Bug #6 Fixed) |
-| 2026-05-15 | 语言切换 EN | /en/chat | PASS |
-| 2026-05-15 | 语言切换 JA | /ja/chat | PASS |
+| 2026-05-16 | 首页加载 | /zh | PASS |
+| 2026-05-16 | 快捷按钮点击 | /zh/chat | PASS |
+| 2026-05-16 | 新对话创建 | /zh/chat | PASS |
+| 2026-05-16 | 语言切换 EN | /en/chat | PASS |
+| 2026-05-16 | 空输入提交 | /en/chat | PASS |
+| 2026-05-16 | 超长文本输入 | /en/chat | PASS |
+| 2026-05-16 | 页面快速切换 | /ja/chat | PASS |
+| 2026-05-16 | 我的歌曲页 (日语) | /ja/my-songs | ⚠️ FAIL (Bug #7)
+| 2026-05-16 | 设置页加载 | /zh/settings | PASS |
+| 2026-05-16 | API 错误处理 - Chat | /api/chat | PASS (Authentication required)
+| 2026-05-16 | API 错误处理 - Lyrics | /api/lyrics | PASS (Invalid prompt)
+| 2026-05-16 | 完整E2E Test 4 | /zh/chat 发送消息 | ⚠️ FAIL (Bug #8) |
+| 2026-05-16 | 完整E2E Test 22-24 | /zh/chat 边界测试 | ⚠️ FAIL (Bug #9) |
 
 ---
 
@@ -83,8 +124,42 @@
 - [x] iPhone (375x667) - PASS
 - [x] iPad (768x1024) - PASS
 
+## E2E 完整测试结果 (25项)
+| 测试项 | 结果 |
+|--------|------|
+| 1. 首页加载测试 | ✅ PASS |
+| 2. 导航测试 (zh/en/ja) | ✅ PASS |
+| 3. 聊天页面加载测试 | ✅ PASS |
+| 4. 发送消息测试 | ❌ FAIL (Bug #8) |
+| 5. AI 响应显示测试 | ✅ PASS |
+| 6. 清除对话测试 | ✅ PASS |
+| 7. 快捷按钮测试 | ✅ PASS |
+| 8. 歌词确认/修改测试 | ✅ PASS |
+| 9. 歌词区域显示/隐藏测试 | ✅ PASS |
+| 10. 生成按钮状态测试 | ✅ PASS |
+| 11. 生成中 loading 状态测试 | ✅ PASS |
+| 12. 生成失败错误处理测试 | ✅ PASS |
+| 13. 生成成功歌曲显示测试 | ✅ PASS |
+| 14. 播放/暂停按钮测试 | ✅ PASS |
+| 15. 进度条显示测试 | ✅ PASS |
+| 16. 播放完成状态测试 | ✅ PASS |
+| 17. 登录页面加载测试 | ✅ PASS |
+| 18. 登录表单验证测试 | ✅ PASS |
+| 19. 登录成功/失败测试 | ✅ PASS |
+| 20. 注册页面加载测试 | ✅ PASS |
+| 21. 注册表单验证测试 | ✅ PASS |
+| 22. 空消息发送测试 | ❌ FAIL (Bug #9) |
+| 23. 超长消息测试 | ❌ FAIL (Bug #9) |
+| 24. 特殊字符消息测试 | ❌ FAIL (Bug #9) |
+| 25. 快速连续点击测试 | ✅ PASS |
+
+**总计**: 21/25 通过, 4 失败
+
 ## 总结
 - 已修复: Bug #1, #2, #3, #4, #5, #6
-- 进行中: 无
+- 新发现: Bug #7 (日语翻译缺失)
+- 新发现: Bug #8 (聊天页面输入框定位失败)
+- 新发现: Bug #9 (快速切换后输入框丢失)
+- 待修复: Bug #7, #8, #9
 
-**所有已知 Bug 已修复！**
+**需要关注: Bug #7, #8, #9 需要修复！**

@@ -118,7 +118,7 @@ export default function MySongsPage() {
       <div className="max-w-4xl mx-auto px-4">
         <div className="glass-card p-8 text-center">
           <div className="loading-spinner mx-auto" style={{ width: 48, height: 48 }} />
-          <p className="mt-4" style={{ color: 'var(--text-muted)' }}>{t('mySongs.loadingSongs')}</p>
+          <p className="mt-4" style={{ color: 'var(--text-muted)' }}>{t('loadingSongs')}</p>
         </div>
       </div>
     )
@@ -128,14 +128,14 @@ export default function MySongsPage() {
     <div className="max-w-4xl mx-auto px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-          {t('mySongs.title')}
+          {t('title')}
         </h1>
         <Link
           href={`/${locale}/chat`}
           className="generate-btn"
           style={{ width: 'auto', padding: '0.625rem 1.5rem' }}
         >
-          {t('mySongs.createNew')}
+          {t('createNew')}
         </Link>
       </div>
 
@@ -147,17 +147,17 @@ export default function MySongsPage() {
             🎵
           </div>
           <p className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
-            {t('mySongs.noSongs')}
+            {t('noSongs')}
           </p>
           <p className="text-sm mt-2" style={{ color: 'var(--text-muted)' }}>
-            {t('mySongs.startCreating')}
+            {t('startCreating')}
           </p>
           <Link
             href={`/${locale}/chat`}
             className="inline-block mt-6 generate-btn"
             style={{ width: 'auto', padding: '0.75rem 2rem' }}
           >
-            {t('mySongs.createSong')}
+            {t('createSong')}
           </Link>
         </div>
       ) : (
@@ -188,7 +188,7 @@ export default function MySongsPage() {
                       background: 'rgba(16, 185, 129, 0.2)',
                       color: 'var(--success)'
                     }}>
-                      {t('mySongs.ready')}
+                      {t('ready')}
                     </span>
                   )}
                   {song.status === 'failed' && (
@@ -196,7 +196,7 @@ export default function MySongsPage() {
                       background: 'rgba(239, 68, 68, 0.2)',
                       color: 'var(--error)'
                     }}>
-                      {t('mySongs.failed')}
+                      {t('failed')}
                     </span>
                   )}
                 </div>
@@ -205,7 +205,7 @@ export default function MySongsPage() {
               {song.lyrics && (
                 <details className="mb-3">
                   <summary className="text-sm cursor-pointer hover:opacity-80" style={{ color: 'var(--accent-primary)' }}>
-                    {t('mySongs.viewLyrics')}
+                    {t('viewLyrics')}
                   </summary>
                   <pre className="mt-2 text-sm p-3 rounded border whitespace-pre-wrap" style={{
                     background: 'var(--bg-input)',
@@ -228,7 +228,7 @@ export default function MySongsPage() {
 
               {song.status === 'failed' && song.error && (
                 <div className="text-sm mb-2" style={{ color: 'var(--error)' }}>
-                  {t('mySongs.errorLabel')}: {song.error}
+                  {t('errorLabel')}: {song.error}
                 </div>
               )}
 
@@ -239,7 +239,7 @@ export default function MySongsPage() {
                     className="secondary-btn"
                     style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
                   >
-                    {t('mySongs.regenerate')}
+                    {t('regenerate')}
                   </button>
                 )}
                 <button
@@ -256,7 +256,7 @@ export default function MySongsPage() {
                     background: 'transparent'
                   }}
                 >
-                  {deletingId === song.id ? t('mySongs.deleting') : t('mySongs.delete')}
+                  {deletingId === song.id ? t('deleting') : t('delete')}
                 </button>
               </div>
             </div>
@@ -267,9 +267,9 @@ export default function MySongsPage() {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={deleteDialog.open}
-        title={t('mySongs.confirmDelete')}
-        message={t('mySongs.confirmDeleteMessage', { prompt: deleteDialog.prompt })}
-        confirmText={t('mySongs.delete')}
+        title={t('confirmDelete')}
+        message={t('confirmDeleteMessage', { prompt: deleteDialog.prompt })}
+        confirmText={t('delete')}
         cancelText={t('common.cancel')}
         destructive
         onConfirm={handleDelete}
