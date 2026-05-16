@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import WavePlayer from '@/components/player/WavePlayer'
 import Link from 'next/link'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import { useTranslations as useCommonTranslations } from 'next-intl'
 
 // Helper: Remove think section from AI response
 function stripThinkSection(content: string): string {
@@ -28,6 +29,7 @@ export default function MySongsPage() {
   const locale = useLocale()
   const { data: session } = useSession()
   const t = useTranslations('mySongs')
+  const tCommon = useCommonTranslations('common')
   const [songs, setSongs] = useState<Song[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -270,7 +272,7 @@ export default function MySongsPage() {
         title={t('confirmDelete')}
         message={t('confirmDeleteMessage', { prompt: deleteDialog.prompt })}
         confirmText={t('delete')}
-        cancelText={t('common.cancel')}
+        cancelText={tCommon('cancel')}
         destructive
         onConfirm={handleDelete}
         onCancel={() => setDeleteDialog({ open: false, songId: null, prompt: '' })}
