@@ -22,7 +22,22 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { messages } = body
+    const { messages, locale = 'zh' } = body
+
+    // Language instruction based on locale
+    const languageInstructions: Record<string, string> = {
+      zh: '你是一个友好的AI助手，请用中文回复用户。',
+      en: 'You are a friendly AI assistant. Please reply to the user in English.',
+      ja: 'あなたは친절なAIアシスタントです。日本語で返信してください。',
+    }
+
+    const systemMessage = languageInstructions[locale] || languageInstructions.zh
+
+    // Prepend system message for language context
+    const allMessages = [
+      { role: 'system' as const, content: systemMessage },
+      ...messages,
+    ]
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
@@ -48,7 +63,7 @@ export async function POST(request: NextRequest) {
       payload: { messageCount: messages.length }
     })
 
-    const response = await chatCompletion(messages)
+    const response = await chatCompletion(allMessages)
 
     await prisma.tokenUsage.create({
       data: {

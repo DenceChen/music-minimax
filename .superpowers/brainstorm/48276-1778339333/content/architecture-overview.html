@@ -1,0 +1,112 @@
+<h2>Music MiniMax - 目标架构</h2>
+<p class="subtitle">Next.js 14 App Router 同构架构，所有请求经同一域名</p>
+
+<div class="section">
+  <h3>现状 → 目标</h3>
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">当前架构（Flask + React 分离）</div>
+      <div class="mockup-body" style="font-size:12px;text-align:left;padding:16px;background:#f5f5f5;">
+        <div style="border:1px solid #ccc;padding:8px;margin-bottom:8px;background:white;">
+          <strong>Frontend (localhost:3000)</strong><br/>
+          React SPA<br/>
+          <span style="color:#e53e3e;">→ 直接调用 MiniMax API</span>
+        </div>
+        <div style="border:1px solid #ccc;padding:8px;margin-bottom:8px;background:white;">
+          <strong>Backend (localhost:5000)</strong><br/>
+          Flask API<br/>
+          <span style="color:#e53e3e;">API Key 明文存在代码中</span>
+        </div>
+        <div style="border:1px dashed #ccc;padding:8px;background:#fff5f5;">
+          <strong style="color:#e53e3e;">问题：无数据库、无认证、无任务队列</strong>
+        </div>
+      </div>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">目标架构（Next.js 14 同构）</div>
+      <div class="mockup-body" style="font-size:12px;text-align:left;padding:16px;background:#1a1a2e;color:white;">
+        <div style="border:1px solid #4a5568;padding:8px;margin-bottom:8px;background:#2d3748;">
+          <strong>Next.js App (localhost:3000)</strong><br/>
+          前端 UI + API Routes
+        </div>
+        <div style="margin-left:20px;border-left:2px solid #4299e1;padding-left:8px;margin-bottom:8px;">
+          <div style="border:1px solid #4299e1;padding:6px;background:#2b6cb0;">/api/auth (NextAuth)</div>
+          <div style="border:1px solid #48bb78;padding:6px;margin-top:4px;background:#276749;">/api/chat</div>
+          <div style="border:1px solid #ed8936;padding:6px;margin-top:4px;background:#c05621;">/api/lyrics</div>
+          <div style="border:1px solid #9f7aea;padding:6px;margin-top:4px;background:#6b46c1;">/api/music (任务队列)</div>
+          <div style="border:1px solid #f56565;padding:6px;margin-top:4px;background:#c53030;">/admin/usage</div>
+        </div>
+        <div style="border:1px solid #4a5568;padding:8px;margin-bottom:8px;background:#2d3748;">
+          <strong>Prisma + SQLite</strong><br/>
+          用户表 / 任务表 / 消耗记录
+        </div>
+        <div style="border:1px solid #4a5568;padding:8px;background:#2d3748;">
+          <strong>MiniMax API（.env.local 隔离）</strong><br/>
+          Key 永不暴露前端
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>核心业务流程</h3>
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:20px;font-size:14px;background:#1a1a2e;color:white;flex-wrap:wrap;">
+    <div style="border:1px solid #4299e1;padding:8px 12px;background:#2b6cb0;border-radius:4px;">① 登录</div>
+    <span style="color:#a0aec0;">→</span>
+    <div style="border:1px solid #48bb78;padding:8px 12px;background:#276749;border-radius:4px;">② 对话收集需求</div>
+    <span style="color:#a0aec0;">→</span>
+    <div style="border:1px solid #ed8936;padding:8px 12px;background:#c05621;border-radius:4px;">③ 生成歌词</div>
+    <span style="color:#a0aec0;">→</span>
+    <div style="border:1px solid #9f7aea;padding:8px 12px;background:#6b46c1;border-radius:4px;">④ 用户确认</div>
+    <span style="color:#a0aec0;">→</span>
+    <div style="border:1px solid #f56565;padding:8px 12px;background:#c53030;border-radius:4px;">⑤ 异步生成歌曲</div>
+    <span style="color:#a0aec0;">→</span>
+    <div style="border:1px solid #38b2ac;padding:8px 12px;background:#2c7a7b;border-radius:4px;">⑥ 播放/下载</div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>关键差异对比</h3>
+  <table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <tr style="background:#2d3748;color:white;">
+      <th style="padding:8px;border:1px solid #4a5568;text-align:left;">维度</th>
+      <th style="padding:8px;border:1px solid #4a5568;text-align:left;">当前</th>
+      <th style="padding:8px;border:1px solid #4a5568;text-align:left;">目标</th>
+    </tr>
+    <tr style="background:#f7fafc;">
+      <td style="padding:8px;border:1px solid #e2e8f0;">技术栈</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#e53e3e;">Flask + React</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#2f855a;">Next.js 14 + TypeScript</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="padding:8px;border:1px solid #e2e8f0;">数据库</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#e53e3e;">无</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#2f855a;">SQLite + Prisma</td>
+    </tr>
+    <tr style="background:#f7fafc;">
+      <td style="padding:8px;border:1px solid #e2e8f0;">认证</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#e53e3e;">无</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#2f855a;">NextAuth</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="padding:8px;border:1px solid #e2e8f0;">异步任务</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#e53e3e;">无（同步等待）</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#2f855a;">任务表 + 前端轮询</td>
+    </tr>
+    <tr style="background:#f7fafc;">
+      <td style="padding:8px;border:1px solid #e2e8f0;">Token 保护</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#e53e3e;">无</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#2f855a;">每日限制 + 统计</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="padding:8px;border:1px solid #e2e8f0;">日志</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#e53e3e;">basic logging</td>
+      <td style="padding:8px;border:1px solid #e2e8f0;color:#2f855a;">pino 结构化 JSON</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section" style="text-align:center;color:#718096;font-size:13px;">
+  <p>点击右上角继续到下一个问题，或直接在终端回复您的想法</p>
+</div>

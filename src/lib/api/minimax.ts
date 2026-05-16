@@ -70,7 +70,17 @@ export async function chatCompletion(
   return response.json()
 }
 
-export async function generateLyrics(prompt: string): Promise<string> {
+interface LyricsGenerationResponse {
+  song_title: string
+  style_tags: string
+  lyrics: string
+  base_resp: {
+    status_code: number
+    status_msg: string
+  }
+}
+
+export async function generateLyrics(prompt: string): Promise<{ song_title: string; style_tags: string; lyrics: string }> {
   const response = await fetch(`${MINIMAX_API_BASE}/v1/lyrics_generation`, {
     method: 'POST',
     headers: {
@@ -78,13 +88,8 @@ export async function generateLyrics(prompt: string): Promise<string> {
       'Authorization': `Bearer ${MINIMAX_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'lyrics_generation',
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+      mode: 'write_full_song',
+      prompt: prompt,
     }),
   })
 
@@ -93,8 +98,17 @@ export async function generateLyrics(prompt: string): Promise<string> {
     throw new Error(`MiniMax API error: ${response.status} - ${errorText}`)
   }
 
-  const data: LyricsResponse = await response.json()
-  return data.choices[0]?.message?.content || ''
+  const data: LyricsGenerationResponse = await response.json()
+
+  if (data.base_resp?.status_code !== 0) {
+    throw new Error(data.base_resp?.status_msg || 'Lyrics generation failed')
+  }
+
+  return {
+    song_title: data.song_title || '',
+    style_tags: data.style_tags || '',
+    lyrics: data.lyrics || ''
+  }
 }
 
 export interface MusicResult {

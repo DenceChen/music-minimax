@@ -24,14 +24,35 @@
     "generatingSong": "Generating song...",
     "generateSong": "Generate Song",
     "generatedLyrics": "Generated Lyrics",
-    "yourSongReady": "Your Song is Ready!"
+    "yourSongReady": "Your Song is Ready!",
+    "newChat": "New Chat",
+    "selectOrStartChat": "Select or start a new chat",
+    "noSessions": "No conversations yet",
+    "noSessionsHint": "Click above to start a new chat",
+    "deleteSession": "Delete Chat",
+    "confirmDeleteSession": "Are you sure you want to delete \"{title}\"? This cannot be undone.",
+    "quickPromptsTitle": "Quick Generate",
+    "featureLyrics": "AI Lyrics",
+    "featureMusic": "Music Generation",
+    "featureCloud": "Cloud Sync"
   },
   "mySongs": {
     "title": "My Songs",
     "noSongs": "No songs yet, keep creating!",
     "delete": "Delete",
     "play": "Play",
-    "regenerate": "Regenerate"
+    "regenerate": "Regenerate",
+    "createNew": "Create New Song",
+    "viewLyrics": "View Lyrics",
+    "ready": "Ready",
+    "failed": "Failed",
+    "deleting": "Deleting...",
+    "confirmDelete": "Delete Song",
+    "confirmDeleteMessage": "Are you sure you want to delete \"{prompt}\"? This cannot be undone.",
+    "errorLabel": "Error",
+    "loadingSongs": "Loading songs...",
+    "createSong": "Create Song",
+    "startCreating": "Start by creating your first song in the Chat page."
   },
   "settings": {
     "title": "Settings",

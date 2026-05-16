@@ -24,14 +24,35 @@
     "generatingSong": "正在生成歌曲...",
     "generateSong": "生成歌曲",
     "generatedLyrics": "已生成的歌词",
-    "yourSongReady": "你的歌曲已准备好！"
+    "yourSongReady": "你的歌曲已准备好！",
+    "newChat": "新对话",
+    "selectOrStartChat": "选择或开始新对话",
+    "noSessions": "暂无对话记录",
+    "noSessionsHint": "点击上方按钮开始新对话",
+    "deleteSession": "删除对话",
+    "confirmDeleteSession": "确定要删除对话「{title}」吗？此操作不可撤销。",
+    "quickPromptsTitle": "一键生成",
+    "featureLyrics": "AI 歌词",
+    "featureMusic": "音乐生成",
+    "featureCloud": "云端同步"
   },
   "mySongs": {
     "title": "我的作品",
     "noSongs": "还没有歌曲，继续创作吧！",
     "delete": "删除",
     "play": "播放",
-    "regenerate": "重新生成"
+    "regenerate": "重新生成",
+    "createNew": "创建新歌曲",
+    "viewLyrics": "查看歌词",
+    "ready": "已完成",
+    "failed": "失败",
+    "deleting": "删除中...",
+    "confirmDelete": "删除歌曲",
+    "confirmDeleteMessage": "确定要删除「{prompt}」吗？此操作不可撤销。",
+    "errorLabel": "错误",
+    "loadingSongs": "加载歌曲中...",
+    "createSong": "创建歌曲",
+    "startCreating": "去对话页面创建你的第一首歌曲吧！"
   },
   "settings": {
     "title": "设置",
@@ -41,7 +62,8 @@
     "apiKeySettingDesc": "设置你自己的 MiniMax API Key（将覆盖环境变量）",
     "apiKeyPlaceholder": "输入你的 API Key",
     "saved": "设置已保存",
-    "selectModel": "选择模型"
+    "selectModel": "选择模型",
+    "save": "保存"
   },
   "auth": {
     "login": "登录",

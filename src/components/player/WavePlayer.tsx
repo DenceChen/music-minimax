@@ -19,11 +19,16 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
   useEffect(() => {
     if (!containerRef.current) return
 
+    // Destroy previous instance
+    if (wavesurferRef.current) {
+      wavesurferRef.current.destroy()
+    }
+
     const wavesurfer = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: '#cbd5e1',
-      progressColor: '#3b82f6',
-      cursorColor: '#3b82f6',
+      waveColor: 'var(--waveform-bar)',
+      progressColor: 'var(--accent-primary)',
+      cursorColor: 'var(--accent-secondary)',
       barWidth: 2,
       barRadius: 3,
       cursorWidth: 1,
@@ -56,7 +61,22 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
     wavesurfer.load(url)
 
     return () => {
-      wavesurfer.destroy()
+      try {
+        wavesurfer.destroy()
+      } catch (e) {
+        // Ignore AbortError and DOMException during cleanup
+        if (e instanceof Error) {
+          if (e.name === 'AbortError' || e.name === 'DOMException') {
+            return
+          }
+          // Also check message for AbortError
+          if (e.message?.includes('aborted') || e.message?.includes('abort')) {
+            return
+          }
+        }
+        // Suppress all errors during cleanup to prevent console noise
+        console.debug('WavePlayer cleanup:', e)
+      }
     }
   }, [url, onEnded])
 
@@ -71,24 +91,24 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="audio-wrapper">
       <div ref={containerRef} className="w-full" />
 
       {isLoading && (
-        <div className="text-center text-gray-500 text-sm mt-2">
-          Loading audio...
+        <div className="text-center py-3" style={{ color: 'var(--text-muted)' }}>
+          <div className="loading-spinner" style={{ width: 40, height: 40, margin: '0 auto' }} />
         </div>
       )}
 
       <div className="flex items-center justify-between mt-4">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm font-mono" style={{ color: 'var(--text-muted)' }}>
           {formatTime(currentTime)}
         </span>
 
         <button
           onClick={togglePlay}
           disabled={isLoading}
-          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center text-white"
+          className="player-btn play-btn"
         >
           {isPlaying ? (
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -101,7 +121,7 @@ export default function WavePlayer({ url, onEnded }: WavePlayerProps) {
           )}
         </button>
 
-        <span className="text-sm text-gray-600">
+        <span className="text-sm font-mono" style={{ color: 'var(--text-muted)' }}>
           {formatTime(duration)}
         </span>
       </div>

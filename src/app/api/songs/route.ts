@@ -4,6 +4,12 @@ import { logger, generateRequestId } from '@/lib/logger'
 
 const log = logger
 
+function stripThinkSection(content: string): string {
+  return content.replace(/<start_of_think>[\s\S]*?<\/think>/gi, '')
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .trim()
+}
+
 export async function GET(request: NextRequest) {
   const requestId = generateRequestId()
   const startTime = Date.now()
@@ -42,9 +48,16 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    // Filter out think sections from lyrics and prompt
+    const filteredSongs = songs.map(song => ({
+      ...song,
+      lyrics: song.lyrics ? stripThinkSection(song.lyrics) : null,
+      prompt: song.prompt ? stripThinkSection(song.prompt) : null,
+    }))
+
     return NextResponse.json({
       success: true,
-      data: { songs },
+      data: { songs: filteredSongs },
     })
   } catch (error) {
     const err = error as Error

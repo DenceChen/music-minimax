@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>对话创作 - Music MiniMax</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: rgba(15, 15, 22, 0.95);
+      border-right: 1px solid rgba(139, 92, 246, 0.15);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .new-chat-btn {
+      margin: 20px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      color: #a78bfa;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .new-chat-btn:hover {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.3));
+    }
+
+    .new-chat-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .chat-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 12px;
+    }
+
+    .chat-history-item {
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: #9ca3af;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.15s ease;
+    }
+
+    .chat-history-item:hover {
+      background: rgba(139, 92, 246, 0.1);
+      color: #e5e7eb;
+    }
+
+    .chat-history-item.active {
+      background: rgba(139, 92, 246, 0.15);
+      color: #a78bfa;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0a0a0f;
+      position: relative;
+    }
+
+    /* Animated background */
+    .bg-gradient {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 30% 20%, rgba(120, 80, 200, 0.08), transparent),
+        radial-gradient(ellipse 50% 30% at 70% 80%, rgba(60, 100, 200, 0.06), transparent);
+      pointer-events: none;
+    }
+
+    /* Chat Header */
+    .chat-header {
+      padding: 20px 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+
+    .chat-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .header-btn {
+      padding: 8px 14px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 8px;
+      color: #a78bfa;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .header-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    .header-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Chat Messages */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .message {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .message.assistant .message-avatar {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    }
+
+    .message.user .message-avatar {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    .message-avatar svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+
+    .message.user .message-avatar svg {
+      fill: #a78bfa;
+    }
+
+    .message-content {
+      max-width: 70%;
+    }
+
+    .message-bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .message.assistant .message-bubble {
+      background: rgba(25, 25, 35, 0.9);
+      border: 1px solid rgba(139, 92, 246, 0.15);
+      color: #e5e7eb;
+      border-top-left-radius: 4px;
+    }
+
+    .message.user .message-bubble {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: white;
+      border-top-right-radius: 4px;
+    }
+
+    /* Lyrics Display */
+    .lyrics-section {
+      margin-top: 20px;
+      background: rgba(15, 15, 22, 0.8);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .lyrics-header {
+      padding: 14px 18px;
+      background: rgba(139, 92, 246, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+    }
+
+    .lyrics-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a78bfa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lyrics-title svg {
+      width: 16px;
+      height: 16px;
+      fill: #a78bfa;
+    }
+
+    .lyrics-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lyrics-btn {
+      padding: 6px 12px;
+      background: rgba(139, 92, 246, 0.15);
+      border: none;
+      border-radius: 6px;
+      color: #a78bfa;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .lyrics-btn:hover {
+      background: rgba(139, 92, 246, 0.25);
+    }
+
+    .lyrics-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .lyrics-content {
+      padding: 18px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #d1d5db;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .lyrics-content:focus {
+      outline: none;
+      background: rgba(20, 20, 30, 0.5);
+    }
+
+    .lyrics-content[contenteditable="true"] {
+      cursor: text;
+    }
+
+    .lyrics-line {
+      padding: 4px 8px;
+      margin: -4px -8px;
+      border-radius: 4px;
+      transition: background 0.15s ease;
+    }
+
+    .lyrics-line:hover {
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    /* Generation Progress */
+    .generation-progress {
+      margin-top: 24px;
+      background: rgba(25, 25, 35, 0.9);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .progress-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a78bfa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-title svg {
+      width: 18px;
+      height: 18px;
+      fill: #a78bfa;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .progress-status {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #8b5cf6, #6366f1, #8b5cf6);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      animation: progressShimmer 2s linear infinite;
+      transition: width 0.3s ease;
+    }
+
+    @keyframes progressShimmer {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Player Controls */
+    .player-controls {
+      margin-top: 20px;
+      background: rgba(25, 25, 35, 0.9);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .player-waveform {
+      height: 60px;
+      background: rgba(139, 92, 246, 0.05);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      overflow: hidden;
+    }
+
+    .player-waveform-bar {
+      width: 3px;
+      background: linear-gradient(to top, #8b5cf6, #6366f1);
+      border-radius: 2px;
+      animation: playerWave 1s ease-in-out infinite;
+    }
+
+    @keyframes playerWave {
+      0%, 100% { height: 15px; opacity: 0.5; }
+      50% { height: 40px; opacity: 1; }
+    }
+
+    .player-time {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .player-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .player-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #9ca3af;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .player-btn:hover {
+      color: #a78bfa;
+    }
+
+    .player-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .player-btn.play-btn {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 50%;
+      color: white;
+    }
+
+    .player-btn.play-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.4);
+      color: white;
+    }
+
+    .player-btn.play-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .player-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .action-btn {
+      padding: 10px 20px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 10px;
+      color: #a78bfa;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .action-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    .action-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Chat Input */
+    .chat-input-container {
+      padding: 20px 32px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      z-index: 10;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 16px 20px;
+      background: rgba(25, 25, 35, 0.9);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      font-size: 14px;
+      color: #e5e7eb;
+      resize: none;
+      font-family: inherit;
+      min-height: 56px;
+      max-height: 120px;
+      line-height: 1.5;
+    }
+
+    .chat-input::placeholder {
+      color: #6b7280;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .send-btn {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px -5px rgba(139, 92, 246, 0.4);
+    }
+
+    .send-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.3);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(139, 92, 246, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+        </div>
+        <span class="logo-text">Music MiniMax</span>
+      </div>
+    </div>
+
+    <button class="new-chat-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      新建对话
+    </button>
+
+    <div class="chat-history">
+      <div class="chat-history-item active">创作一首关于星空的歌...</div>
+      <div class="chat-history-item">帮我写首情歌</div>
+      <div class="chat-history-item">摇滚风格的歌词</div>
+      <div class="chat-history-item">关于夏天的歌曲</div>
+      <div class="chat-history-item">电子音乐创作</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">音</div>
+        <div class="user-details">
+          <div class="user-name">音乐达人</div>
+          <div class="user-email">user@example.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="bg-gradient"></div>
+
+    <div class="chat-header">
+      <h2>创作助手</h2>
+      <div class="header-actions">
+        <button class="header-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          我的作品
+        </button>
+        <button class="header-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          设置
+        </button>
+      </div>
+    </div>
+
+    <div class="chat-messages">
+      <!-- User Message -->
+      <div class="message user">
+        <div class="message-avatar">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble">帮我创作一首关于星空的歌曲，要温柔治愈的风格</div>
+        </div>
+      </div>
+
+      <!-- Assistant Message -->
+      <div class="message assistant">
+        <div class="message-avatar">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble">
+            好的！我来为你创作一首关于星空的温柔治愈风格歌曲。以下是生成的歌词：
+            <div class="lyrics-section">
+              <div class="lyrics-header">
+                <div class="lyrics-title">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                  </svg>
+                  星空物语 - 歌词
+                </div>
+                <div class="lyrics-actions">
+                  <button class="lyrics-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    编辑
+                  </button>
+                  <button class="lyrics-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    复制
+                  </button>
+                </div>
+              </div>
+              <div class="lyrics-content" contenteditable="true">
+                <div class="lyrics-line">[Verse 1]</div>
+                <div class="lyrics-line">夜空洒满星光</div>
+                <div class="lyrics-line">像你的眼睛一样闪亮</div>
+                <div class="lyrics-line">微风轻轻吹过</div>
+                <div class="lyrics-line">带走所有忧伤</div>
+                <div class="lyrics-line"></div>
+                <div class="lyrics-line">[Chorus]</div>
+                <div class="lyrics-line">在这片星空下</div>
+                <div class="lyrics-line">我们一起歌唱</div>
+                <div class="lyrics-line">让星光照亮</div>
+                <div class="lyrics-line">每一个梦想</div>
+                <div class="lyrics-line"></div>
+                <div class="lyrics-line">[Verse 2]</div>
+                <div class="lyrics-line">银河缓缓流淌</div>
+                <div class="lyrics-line">诉说着永恒的故事</div>
+                <div class="lyrics-line">不管世界多大</div>
+                <div class="lyrics-line">爱就在你身边</div>
+              </div>
+            </div>
+            <p style="margin-top: 16px; color: #9ca3af;">歌词看起来怎么样？如果你满意的话，我可以开始生成歌曲。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generation Progress (shown when generating) -->
+      <div class="generation-progress" id="progressSection">
+        <div class="progress-header">
+          <div class="progress-title">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+            </svg>
+            正在生成音乐...
+          </div>
+          <div class="progress-status">预计剩余 45 秒</div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 62%;"></div>
+        </div>
+        <div class="progress-info">
+          <span>62%</span>
+          <span>正在合成音频...</span>
+        </div>
+      </div>
+
+      <!-- Player Controls (shown when done) -->
+      <div class="player-controls" id="playerSection" style="display: none;">
+        <div class="player-waveform" id="playerWaveform"></div>
+        <div class="player-time">
+          <span>0:00</span>
+          <span>3:24</span>
+        </div>
+        <div class="player-buttons">
+          <button class="player-btn">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="player-btn play-btn" id="playBtn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="player-btn">
+            <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+        <div class="player-actions">
+          <button class="action-btn">
+            <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            重新生成
+          </button>
+          <button class="action-btn primary">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            下载
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input-container">
+      <div class="chat-input-wrapper">
+        <textarea class="chat-input" placeholder="描述你想要什么样的音乐..." rows="1"></textarea>
+        <button class="send-btn">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate waveform bars for player
+    const playerWaveform = document.getElementById('playerWaveform');
+    for (let i = 0; i < 80; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'player-waveform-bar';
+      bar.style.animationDelay = (i * 0.03) + 's';
+      bar.style.height = (10 + Math.random() * 30) + 'px';
+      playerWaveform.appendChild(bar);
+    }
+
+    // Toggle progress/player sections (for demo)
+    // In real app, progress shows during generation, player after completion
+  </script>
+</body>
+</html>

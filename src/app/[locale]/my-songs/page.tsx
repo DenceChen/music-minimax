@@ -2,9 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import WavePlayer from '@/components/player/WavePlayer'
 import Link from 'next/link'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
+
+// Helper: Remove think section from AI response
+function stripThinkSection(content: string): string {
+  return content.replace(/<start_of_think>[\s\S]*?<\/think>/gi, '')
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .trim()
+}
 
 interface Song {
   id: string
@@ -19,9 +27,16 @@ interface Song {
 export default function MySongsPage() {
   const locale = useLocale()
   const { data: session } = useSession()
+  const t = useTranslations('mySongs')
   const [songs, setSongs] = useState<Song[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; songId: string | null; prompt: string }>({
+    open: false,
+    songId: null,
+    prompt: ''
+  })
+  const [playingId, setPlayingId] = useState<string | null>(null)
 
   const fetchSongs = async () => {
     if (!session?.user?.id) return
@@ -31,7 +46,7 @@ export default function MySongsPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          setSongs(data.data.songs)
+          setSongs(data.data.songs || [])
         }
       }
     } catch (error) {
@@ -45,25 +60,29 @@ export default function MySongsPage() {
     fetchSongs()
   }, [session?.user?.id])
 
-  const handleDelete = async (songId: string) => {
-    if (!session?.user?.id || deletingId) return
+  const handleDelete = async () => {
+    if (!deleteDialog.songId) return
 
-    setDeletingId(songId)
+    setDeletingId(deleteDialog.songId)
     try {
-      const response = await fetch(`/api/songs/${songId}?userId=${session.user.id}`, {
+      const response = await fetch(`/api/songs/${deleteDialog.songId}?userId=${session?.user?.id}`, {
         method: 'DELETE',
       })
 
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          setSongs((prev) => prev.filter((s) => s.id !== songId))
+          setSongs(prev => prev.filter(s => s.id !== deleteDialog.songId))
+          if (playingId === deleteDialog.songId) {
+            setPlayingId(null)
+          }
         }
       }
     } catch (error) {
       console.error('Error deleting song:', error)
     } finally {
       setDeletingId(null)
+      setDeleteDialog({ open: false, songId: null, prompt: '' })
     }
   }
 
@@ -80,8 +99,8 @@ export default function MySongsPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          setSongs((prev) =>
-            prev.map((s) =>
+          setSongs(prev =>
+            prev.map(s =>
               s.id === songId
                 ? { ...s, status: 'done', musicUrl: data.data.musicUrl, error: undefined }
                 : s
@@ -97,9 +116,9 @@ export default function MySongsPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
-          <p className="mt-2 text-gray-600">Loading songs...</p>
+        <div className="glass-card p-8 text-center">
+          <div className="loading-spinner mx-auto" style={{ width: 48, height: 48 }} />
+          <p className="mt-4" style={{ color: 'var(--text-muted)' }}>{t('mySongs.loadingSongs')}</p>
         </div>
       </div>
     )
@@ -108,36 +127,50 @@ export default function MySongsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Songs</h1>
+        <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+          {t('mySongs.title')}
+        </h1>
         <Link
           href={`/${locale}/chat`}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="generate-btn"
+          style={{ width: 'auto', padding: '0.625rem 1.5rem' }}
         >
-          Create New Song
+          {t('mySongs.createNew')}
         </Link>
       </div>
 
       {songs.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
-          <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-          </svg>
-          <p className="mt-4 text-gray-600">No songs yet</p>
-          <p className="text-sm text-gray-500 mt-1">Start by creating your first song in the Chat page.</p>
+        <div className="glass-card p-12 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center text-3xl" style={{
+            background: 'var(--bg-tertiary)'
+          }}>
+            🎵
+          </div>
+          <p className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
+            {t('mySongs.noSongs')}
+          </p>
+          <p className="text-sm mt-2" style={{ color: 'var(--text-muted)' }}>
+            {t('mySongs.startCreating')}
+          </p>
           <Link
             href={`/${locale}/chat`}
-            className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block mt-6 generate-btn"
+            style={{ width: 'auto', padding: '0.75rem 2rem' }}
           >
-            Create Song
+            {t('mySongs.createSong')}
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
           {songs.map((song) => (
-            <div key={song.id} className="bg-white rounded-lg shadow p-4">
+            <div
+              key={song.id}
+              className={`glass-card p-4 transition-all ${playingId === song.id ? 'ring-2' : ''}`}
+              style={playingId === song.id ? { ringColor: 'var(--accent-primary)' } : {}}
+            >
               <div className="flex justify-between items-start mb-3">
-                <div>
-                  <p className="text-sm text-gray-500">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                     {new Date(song.createdAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : 'en-US', {
                       year: 'numeric',
                       month: 'long',
@@ -146,18 +179,24 @@ export default function MySongsPage() {
                       minute: '2-digit',
                     })}
                   </p>
-                  <p className="text-gray-700 mt-1 line-clamp-2">{song.prompt}</p>
+                  <p className="mt-1 truncate pr-4" style={{ color: 'var(--text-primary)' }}>{song.prompt}</p>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   {song.status === 'done' && (
-                    <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
-                      Ready
+                    <span className="px-2 py-1 text-xs font-medium rounded" style={{
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      color: 'var(--success)'
+                    }}>
+                      {t('mySongs.ready')}
                     </span>
                   )}
                   {song.status === 'failed' && (
-                    <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded">
-                      Failed
+                    <span className="px-2 py-1 text-xs font-medium rounded" style={{
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      color: 'var(--error)'
+                    }}>
+                      {t('mySongs.failed')}
                     </span>
                   )}
                 </div>
@@ -165,46 +204,77 @@ export default function MySongsPage() {
 
               {song.lyrics && (
                 <details className="mb-3">
-                  <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800">
-                    View Lyrics
+                  <summary className="text-sm cursor-pointer hover:opacity-80" style={{ color: 'var(--accent-primary)' }}>
+                    {t('mySongs.viewLyrics')}
                   </summary>
-                  <pre className="mt-2 text-sm text-gray-600 bg-gray-50 p-3 rounded border whitespace-pre-wrap">
-                    {song.lyrics}
+                  <pre className="mt-2 text-sm p-3 rounded border whitespace-pre-wrap" style={{
+                    background: 'var(--bg-input)',
+                    color: 'var(--text-secondary)',
+                    borderColor: 'rgba(254, 243, 226, 0.1)'
+                  }}>
+                    {stripThinkSection(song.lyrics)}
                   </pre>
                 </details>
               )}
 
               {song.status === 'done' && song.musicUrl && (
-                <WavePlayer url={song.musicUrl} />
-              )}
-
-              {song.status === 'failed' && (
-                <div className="text-red-600 text-sm mb-2">
-                  Error: {song.error || 'Failed to generate'}
+                <div className="mb-3">
+                  <WavePlayer
+                    url={song.musicUrl}
+                    onEnded={() => setPlayingId(null)}
+                  />
                 </div>
               )}
 
-              <div className="flex justify-end space-x-2 mt-3">
+              {song.status === 'failed' && song.error && (
+                <div className="text-sm mb-2" style={{ color: 'var(--error)' }}>
+                  {t('mySongs.errorLabel')}: {song.error}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 mt-3">
                 {song.status === 'failed' && (
                   <button
                     onClick={() => handleRegenerate(song.id)}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                    className="secondary-btn"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
                   >
-                    Retry
+                    {t('mySongs.regenerate')}
                   </button>
                 )}
                 <button
-                  onClick={() => handleDelete(song.id)}
+                  onClick={() => setDeleteDialog({
+                    open: true,
+                    songId: song.id,
+                    prompt: song.prompt
+                  })}
                   disabled={deletingId === song.id}
-                  className="px-3 py-1 text-sm text-red-600 border border-red-300 rounded hover:bg-red-50 disabled:opacity-50"
+                  className="px-3 py-1 text-sm rounded-lg border transition-all hover:opacity-90"
+                  style={{
+                    borderColor: 'var(--error)',
+                    color: 'var(--error)',
+                    background: 'transparent'
+                  }}
                 >
-                  {deletingId === song.id ? 'Deleting...' : 'Delete'}
+                  {deletingId === song.id ? t('mySongs.deleting') : t('mySongs.delete')}
                 </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteDialog.open}
+        title={t('mySongs.confirmDelete')}
+        message={t('mySongs.confirmDeleteMessage', { prompt: deleteDialog.prompt })}
+        confirmText={t('mySongs.delete')}
+        cancelText={t('common.cancel')}
+        destructive
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteDialog({ open: false, songId: null, prompt: '' })}
+      />
     </div>
   )
 }

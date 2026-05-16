@@ -16,7 +16,19 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { prompt } = body
+    const { prompt, locale = 'zh' } = body
+
+    // Language instruction based on locale
+    const languageInstructions: Record<string, string> = {
+      zh: '请用中文生成歌词。',
+      en: 'Please generate lyrics in English.',
+      ja: '日本語で歌詞を生成してください。',
+    }
+
+    const languageInstruction = languageInstructions[locale] || languageInstructions.zh
+
+    // Combine prompt with language instruction
+    const fullPrompt = `${languageInstruction} ${prompt}`
 
     if (!prompt || typeof prompt !== 'string') {
       return NextResponse.json(
@@ -56,10 +68,11 @@ export async function POST(request: NextRequest) {
         durationMs: Date.now() - startTime,
         payload: { cacheKey }
       })
+      const cachedData = JSON.parse(cached.lyrics)
       return NextResponse.json({
         success: true,
         data: {
-          lyrics: cached.lyrics,
+          ...cachedData,
           cached: true,
           cacheKey,
         },
@@ -67,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Call MiniMax API with retry logic (exponential backoff: 1s, 2s, 4s)
-    let lyrics = ''
+    let lyricsResult: { song_title: string; style_tags: string; lyrics: string } | null = null
     let retries = 0
     const maxRetries = 3
     let lastError: Error | null = null
@@ -75,14 +88,14 @@ export async function POST(request: NextRequest) {
     while (retries < maxRetries) {
       try {
         const apiStartTime = Date.now()
-        lyrics = await generateLyrics(prompt)
+        lyricsResult = await generateLyrics(fullPrompt)
         log.info({
           requestId,
           userId: null,
           module: 'api/lyrics',
           action: 'lyrics_api_success',
           durationMs: Date.now() - apiStartTime,
-          payload: { lyricsLength: lyrics.length }
+          payload: { lyricsLength: lyricsResult.lyrics.length }
         })
         break
       } catch (error) {
@@ -104,7 +117,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!lyrics && lastError) {
+    if (!lyricsResult && lastError) {
       throw lastError
     }
 
@@ -112,16 +125,18 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date()
     expiresAt.setHours(expiresAt.getHours() + 24)
 
+    const lyricsJson = JSON.stringify(lyricsResult)
+
     await prisma.lyricsCache.upsert({
       where: { cacheKey },
       update: {
-        lyrics,
+        lyrics: lyricsJson,
         expiresAt,
       },
       create: {
         cacheKey,
         prompt,
-        lyrics,
+        lyrics: lyricsJson,
         expiresAt,
       },
     })
@@ -138,7 +153,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        lyrics,
+        ...lyricsResult!,
         cached: false,
         cacheKey,
       },

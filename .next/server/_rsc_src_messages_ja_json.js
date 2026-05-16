@@ -1,0 +1,25 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+exports.id = "_rsc_src_messages_ja_json";
+exports.ids = ["_rsc_src_messages_ja_json"];
+exports.modules = {
+
+/***/ "(rsc)/./src/messages/ja.json":
+/*!******************************!*\
+  !*** ./src/messages/ja.json ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = /*#__PURE__*/JSON.parse('{"nav":{"chat":"チャット","mySongs":"マイソング","settings":"設定","signOut":"ログアウト"},"common":{"welcome":"Music MiniMaxへようこそ","welcomeSubtitle":"どんな曲を作りたいか教えてください","loading":"読み込み中...","error":"エラー","retry":"再試行","save":"保存","cancel":"キャンセル"},"chat":{"placeholder":"どんな曲を作りたいか教えてください...","send":"送信","pleaseWait":"お待ちください...","lyricsGenerated":"歌詞を生成しました。「曲を生成」をクリックして音楽を作成してください！","songReady":"曲が準備できました！スクロールして再生してください！","generatingLyrics":"歌詞を生成中...","generatingSong":"曲を生成中...","generateSong":"曲を生成","generatedLyrics":"生成された歌詞","yourSongReady":"曲が準備できました！","newChat":"新規チャット","selectOrStartChat":"チャットを選択または開始","noSessions":"会話履歴がありません","noSessionsHint":"上のボタンをクリックして新規チャットを開始","deleteSession":"チャットを削除","confirmDeleteSession":"「{title}」を削除してもよろしいですか？この操作は元に戻せません。","quickPromptsTitle":"クイック生成","featureLyrics":"AI歌詞","featureMusic":"音楽生成","featureCloud":"クラウド同期"},"mySongs":{"title":"マイソング","noSongs":"まだ曲がありません、ぜひ作成してください！","delete":"削除","play":"再生","regenerate":"再生成","createNew":"新しい曲を作成","viewLyrics":"歌詞を見る","ready":"準備完了","failed":"失敗","deleting":"削除中...","confirmDelete":"曲を削除","confirmDeleteMessage":"「{prompt}」を削除してもよろしいですか？この操作は元に戻せません。","errorLabel":"エラー","loadingSongs":"曲を読み込み中...","createSong":"曲を作成","startCreating":"チャットページで最初の曲を作成しましょう。"},"settings":{"title":"設定","modelSelection":"モデル選択","modelSelectionDesc":"チャットに使用するAIモデルを選択","apiKeySetting":"API Key設定","apiKeySettingDesc":"自分のMiniMax API Keyを設定（環境変数を上書きします）","apiKeyPlaceholder":"API Keyを入力","saved":"設定が保存されました","selectModel":"モデルを選択"},"auth":{"login":"ログイン","register":"登録","email":"メール","password":"パスワード","signIn":"サインイン","signUp":"サインアップ","noAccount":"アカウントをお持ちでないですか？","hasAccount":"すでにアカウントをお持ちですか？"}}');
+
+/***/ })
+
+};
+;

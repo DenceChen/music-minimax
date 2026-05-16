@@ -1,0 +1,25 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+exports.id = "_rsc_src_messages_zh_json";
+exports.ids = ["_rsc_src_messages_zh_json"];
+exports.modules = {
+
+/***/ "(rsc)/./src/messages/zh.json":
+/*!******************************!*\
+  !*** ./src/messages/zh.json ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = /*#__PURE__*/JSON.parse('{"nav":{"chat":"对话","mySongs":"我的歌曲","settings":"设置","signOut":"退出登录"},"common":{"welcome":"欢迎使用 Music MiniMax","welcomeSubtitle":"告诉我你想创作什么样的歌曲","loading":"加载中...","error":"出错了","retry":"重试","save":"保存","cancel":"取消"},"chat":{"placeholder":"告诉我你想创作什么样的歌曲...","send":"发送","pleaseWait":"请稍候...","lyricsGenerated":"我已为你生成歌词。点击「生成歌曲」来创作音乐！","songReady":"歌曲已准备好！向下滚动播放！","generatingLyrics":"正在生成歌词...","generatingSong":"正在生成歌曲...","generateSong":"生成歌曲","generatedLyrics":"已生成的歌词","yourSongReady":"你的歌曲已准备好！","newChat":"新对话","selectOrStartChat":"选择或开始新对话","noSessions":"暂无对话记录","noSessionsHint":"点击上方按钮开始新对话","deleteSession":"删除对话","confirmDeleteSession":"确定要删除对话「{title}」吗？此操作不可撤销。","quickPromptsTitle":"一键生成","featureLyrics":"AI 歌词","featureMusic":"音乐生成","featureCloud":"云端同步"},"mySongs":{"title":"我的作品","noSongs":"还没有歌曲，继续创作吧！","delete":"删除","play":"播放","regenerate":"重新生成","createNew":"创建新歌曲","viewLyrics":"查看歌词","ready":"已完成","failed":"失败","deleting":"删除中...","confirmDelete":"删除歌曲","confirmDeleteMessage":"确定要删除「{prompt}」吗？此操作不可撤销。","errorLabel":"错误","loadingSongs":"加载歌曲中...","createSong":"创建歌曲","startCreating":"去对话页面创建你的第一首歌曲吧！"},"settings":{"title":"设置","modelSelection":"模型选择","modelSelectionDesc":"选择用于对话的 AI 模型","apiKeySetting":"API Key 设置","apiKeySettingDesc":"设置你自己的 MiniMax API Key（将覆盖环境变量）","apiKeyPlaceholder":"输入你的 API Key","saved":"设置已保存","selectModel":"选择模型","save":"保存"},"auth":{"login":"登录","register":"注册","email":"邮箱","password":"密码","signIn":"登录","signUp":"注册","noAccount":"还没有账号？","hasAccount":"已有账号？"}}');
+
+/***/ })
+
+};
+;

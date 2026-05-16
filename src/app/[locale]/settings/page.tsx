@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 const AVAILABLE_MODELS = [
   { id: 'MiniMax-M2.7-highspeed', name: 'MiniMax-M2.7-highspeed', description: 'High-speed model for quick responses' },
@@ -18,6 +19,7 @@ interface Settings {
 export default function SettingsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const t = useTranslations('settings')
 
   const [settings, setSettings] = useState<Settings>({
     model: 'MiniMax-M2.7-highspeed',
@@ -56,8 +58,8 @@ export default function SettingsPage() {
   if (loading || status === 'loading') {
     return (
       <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-center py-8">Loading...</div>
+        <div className="glass-card p-8 text-center">
+          <div className="loading-spinner mx-auto" style={{ width: 48, height: 48 }} />
         </div>
       </div>
     )
@@ -69,62 +71,81 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-5 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+      <div className="glass-card">
+        <div className="px-6 py-5 border-b" style={{ borderColor: 'rgba(254, 243, 226, 0.08)' }}>
+          <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+            {t('title')}
+          </h1>
         </div>
 
         <div className="px-6 py-5 space-y-6">
           {/* Model Selection */}
           <div>
-            <label htmlFor="model" className="block text-sm font-medium text-gray-700">
-              Model Selection
+            <label htmlFor="model" className="block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+              {t('modelSelection')}
             </label>
-            <p className="mt-1 text-sm text-gray-500">Choose the AI model for chat</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
+              {t('modelSelectionDesc')}
+            </p>
             <select
               id="model"
               value={settings.model}
               onChange={handleModelChange}
-              className="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+              className="mt-2 block w-full px-3 py-2 rounded-lg border text-base"
+              style={{
+                background: 'var(--bg-input)',
+                borderColor: 'rgba(254, 243, 226, 0.1)',
+                color: 'var(--text-primary)'
+              }}
             >
               {AVAILABLE_MODELS.map((model) => (
-                <option key={model.id} value={model.id}>
+                <option key={model.id} value={model.id} style={{ background: 'var(--bg-tertiary)' }}>
                   {model.name}
                 </option>
               ))}
             </select>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
               {AVAILABLE_MODELS.find((m) => m.id === settings.model)?.description}
             </p>
           </div>
 
           {/* API Key Setting */}
           <div>
-            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
-              API Key
+            <label htmlFor="apiKey" className="block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+              {t('apiKeySetting')}
             </label>
-            <p className="mt-1 text-sm text-gray-500">Enter your MiniMax API key (optional)</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
+              {t('apiKeySettingDesc')}
+            </p>
             <input
               type="password"
               id="apiKey"
               value={settings.apiKey}
               onChange={handleApiKeyChange}
-              placeholder="sk-..."
-              className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder={t('apiKeyPlaceholder')}
+              className="mt-2 block w-full px-3 py-2 rounded-lg border text-base"
+              style={{
+                background: 'var(--bg-input)',
+                borderColor: 'rgba(254, 243, 226, 0.1)',
+                color: 'var(--text-primary)'
+              }}
             />
           </div>
 
           {/* Save Button */}
           <div className="flex items-center justify-between">
             {saved && (
-              <span className="text-sm text-green-600">Saved!</span>
+              <span className="text-sm" style={{ color: 'var(--success)' }}>
+                {t('saved')}
+              </span>
             )}
             {!saved && <span></span>}
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="generate-btn"
+              style={{ width: 'auto', padding: '0.75rem 2rem' }}
             >
-              Save
+              {t('save')}
             </button>
           </div>
         </div>
