@@ -112,7 +112,7 @@ export default function ChatPage() {
     }
   }
 
-  const createNewSession = async () => {
+  const createNewSession = async (): Promise<string | null> => {
     try {
       const response = await fetch('/api/chat/sessions', {
         method: 'POST',
@@ -129,10 +129,13 @@ export default function ChatPage() {
           setInput('')
           setShowLyrics(false)
           setCurrentSong(null)
+          return newSession.id
         }
       }
+      return null
     } catch (error) {
       console.error('Failed to create session:', error)
+      return null
     }
   }
 
@@ -191,9 +194,10 @@ export default function ChatPage() {
     if (!input.trim() || isLoading) return
 
     // Create session if needed
-    if (!currentSessionId) {
-      await createNewSession()
-      await new Promise(resolve => setTimeout(resolve, 100))
+    let sessionId = currentSessionId
+    if (!sessionId) {
+      sessionId = await createNewSession()
+      if (!sessionId) return
     }
 
     const userMessage = input.trim()
@@ -204,7 +208,7 @@ export default function ChatPage() {
 
     // Update session title after first user message
     const title = generateTitleFromMessage(userMessage)
-    updateSessionTitle(currentSessionId!, title)
+    updateSessionTitle(sessionId, title)
 
     try {
       const chatResponse = await fetch('/api/chat', {
