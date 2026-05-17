@@ -1,9 +1,8 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/[locale]/chat/page": "app/[locale]/chat/page.js",
-  "/[locale]/(auth)/login/page": "app/[locale]/(auth)/login/page.js",
+  "/api/songs/route": "app/api/songs/route.js",
   "/[locale]/my-songs/page": "app/[locale]/my-songs/page.js",
   "/[locale]/(auth)/register/page": "app/[locale]/(auth)/register/page.js",
-  "/[locale]/settings/page": "app/[locale]/settings/page.js"
+  "/[locale]/(auth)/login/page": "app/[locale]/(auth)/login/page.js",
+  "/[locale]/chat/page": "app/[locale]/chat/page.js",
+  "/[locale]/page": "app/[locale]/page.js"
 }
