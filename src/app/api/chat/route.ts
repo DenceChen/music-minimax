@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const languageInstructions: Record<string, string> = {
       zh: '你是一个友好的AI助手，请用中文回复用户。',
       en: 'You are a friendly AI assistant. Please reply to the user in English.',
-      ja: 'あなたは친절なAIアシスタントです。日本語で返信してください。',
+      ja: 'あなたは親切なAIアシスタントです。日本語で返信してください。',
     }
 
     const systemMessage = languageInstructions[locale] || languageInstructions.zh
