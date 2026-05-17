@@ -1,42 +1,47 @@
-/* Music MiniMax - Neon Cyberpunk Design System v2.0 */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Music MiniMax - Sonic Spectrum Design System v3.0 */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================
-   CSS VARIABLES - Neon Cyberpunk Design Tokens
+   CSS VARIABLES - Sonic Spectrum Design Tokens
    ============================================ */
 :root {
-  /* Background Colors - Deep Cyber Black */
-  --bg-primary: #08080c;
-  --bg-secondary: #0d0d14;
-  --bg-tertiary: #12121f;
-  --bg-card: rgba(18, 18, 31, 0.8);
-  --bg-card-hover: rgba(28, 28, 46, 0.9);
-  --bg-glass: rgba(13, 13, 20, 0.7);
-  --bg-input: rgba(8, 8, 12, 0.9);
+  /* Background Colors - Deep Space with Warm Undertones */
+  --bg-primary: #09090b;
+  --bg-secondary: #111114;
+  --bg-tertiary: #18181c;
+  --bg-card: rgba(20, 20, 26, 0.85);
+  --bg-card-hover: rgba(28, 28, 36, 0.9);
+  --bg-glass: rgba(14, 14, 18, 0.75);
+  --bg-input: rgba(9, 9, 11, 0.9);
 
-  /* Accent Colors - Neon Cyan/Indigo Gradient */
-  --accent-primary: #6366f1;
-  --accent-secondary: #8b5cf6;
-  --accent-tertiary: #a855f7;
+  /* Sonic Spectrum - Primary Accent: Electric Magenta */
+  --accent-primary: #e879f9;
+  --accent-secondary: #c026d3;
+  --accent-tertiary: #a21caf;
+
+  /* Sonic Spectrum - Secondary Accent: Cyan/Teal */
   --accent-cyan: #22d3ee;
-  --accent-glow: rgba(99, 102, 241, 0.4);
-  --accent-glow-strong: rgba(139, 92, 246, 0.6);
+  --accent-teal: #14b8a6;
 
-  /* Gradient Colors - Neon Spectrum */
-  --gradient-start: #6366f1;
-  --gradient-mid: #8b5cf6;
-  --gradient-end: #a855f7;
+  /* Sonic Spectrum - Gradient Spectrum */
+  --gradient-start: #e879f9;
+  --gradient-mid: #c026d3;
+  --gradient-end: #7c3aed;
   --gradient-cyan: #22d3ee;
 
-  /* Text Colors */
-  --text-primary: #f0f0ff;
-  --text-secondary: #a0a0c0;
-  --text-muted: #606080;
-  --text-accent: #8b5cf6;
+  /* Glow Effects - More Subtle */
+  --accent-glow: rgba(232, 121, 249, 0.25);
+  --accent-glow-strong: rgba(192, 38, 211, 0.4);
+
+  /* Text Colors - Warmer Whites */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --text-accent: #e879f9;
 
   /* Status Colors */
   --success: #10b981;
@@ -44,30 +49,30 @@
   --error: #f43f5e;
   --info: #3b82f6;
 
-  /* Audio Waveform - Neon Gradient */
-  --waveform-bar: #3f3f6f;
-  --waveform-bar-active: #8b5cf6;
+  /* Audio Waveform - Spectrum Colors */
+  --waveform-bar: #3f3f46;
+  --waveform-bar-active: #e879f9;
 
-  /* Shadows - Neon Glow */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 30px var(--accent-glow);
-  --shadow-glow-strong: 0 0 60px var(--accent-glow-strong);
-  --shadow-neon-cyan: 0 0 20px rgba(34, 211, 238, 0.4);
-  --shadow-neon-purple: 0 0 20px rgba(139, 92, 246, 0.4);
+  /* Shadows - Refined Depth */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+  --shadow-glow-strong: 0 0 40px var(--accent-glow-strong);
+  --shadow-neon-cyan: 0 0 15px rgba(34, 211, 238, 0.3);
+  --shadow-neon-magenta: 0 0 20px rgba(232, 121, 249, 0.4);
 
   /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
   /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow: 400ms ease cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================
@@ -91,6 +96,7 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
 /* Selection Color */
@@ -121,7 +127,7 @@ body {
 }
 
 /* ============================================
-   BACKGROUND EFFECTS - Cyberpunk Grid
+   BACKGROUND EFFECTS - Sonic Atmosphere
    ============================================ */
 .app-container {
   min-height: 100vh;
@@ -136,14 +142,14 @@ body {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(18, 18, 31, 0.8) 0%, transparent 70%);
+    radial-gradient(ellipse at 15% 0%, rgba(232, 121, 249, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 100%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(14, 14, 18, 1) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Cyberpunk Grid Overlay */
+/* Subtle Sound Wave Pattern */
 .app-container::after {
   content: '';
   position: fixed;
@@ -152,20 +158,14 @@ body {
   right: 0;
   bottom: 0;
   background-image:
-    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+    radial-gradient(circle at 25% 25%, rgba(232, 121, 249, 0.03) 0%, transparent 25%),
+    radial-gradient(circle at 75% 75%, rgba(34, 211, 238, 0.03) 0%, transparent 25%);
+  background-size: 100% 100%;
   pointer-events: none;
   z-index: 0;
-  animation: gridPulse 4s ease-in-out infinite;
 }
 
-@keyframes gridPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-}
-
-/* Scanline Effect */
+/* Scanline Effect - Subtle only */
 .scanlines::before {
   content: '';
   position: fixed;
@@ -176,13 +176,13 @@ body {
   background: repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.1) 2px,
-    rgba(0, 0, 0, 0.1) 4px
+    transparent 3px,
+    rgba(0, 0, 0, 0.03) 3px,
+    rgba(0, 0, 0, 0.03) 6px
   );
   pointer-events: none;
   z-index: 1000;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 /* ============================================
@@ -202,15 +202,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   GLASS MORPHISM COMPONENTS - Neon Glass
+   GLASS MORPHISM COMPONENTS - Sonic Glass
    ============================================ */
 .glass-card {
   background: var(--bg-glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(232, 121, 249, 0.1);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.03);
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
@@ -223,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
@@ -235,13 +235,13 @@ h1, h2, h3, h4, h5, h6 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(232, 121, 249, 0.05), transparent);
+  transition: left 0.6s ease;
   pointer-events: none;
 }
 
 .glass-card:hover::before {
-  opacity: 1;
+  opacity: 0.8;
 }
 
 .glass-card:hover::after {
@@ -250,12 +250,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .glass-card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(139, 92, 246, 0.3);
-  box-shadow: var(--shadow-lg), 0 0 40px rgba(139, 92, 246, 0.15);
-  transform: translateY(-2px);
+  border-color: rgba(232, 121, 249, 0.2);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(232, 121, 249, 0.08);
+  transform: translateY(-1px);
 }
 
-/* Neon Border Glow Effect */
+/* Accent Border Glow Effect - Used sparingly */
 .neon-border {
   position: relative;
 }
@@ -273,21 +273,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .neon-border:hover::before {
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
 /* ============================================
-   NAVIGATION - Cyberpunk Navigation
+   NAVIGATION - Sonic Navigation
    ============================================ */
 .nav-container {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(8, 8, 12, 0.9);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: rgba(9, 9, 11, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(232, 121, 249, 0.12);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
 }
 
 .nav-link {
@@ -301,12 +301,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-link:hover {
   color: var(--text-primary);
-  background: rgba(99, 102, 241, 0.15);
+  background: rgba(232, 121, 249, 0.1);
 }
 
 .nav-link.active {
-  color: var(--accent-secondary);
-  background: rgba(139, 92, 246, 0.2);
+  color: var(--accent-primary);
+  background: rgba(232, 121, 249, 0.12);
 }
 
 .nav-link.active::after {
@@ -315,10 +315,10 @@ h1, h2, h3, h4, h5, h6 {
   bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60%;
+  width: 50%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
-  box-shadow: 0 0 10px var(--accent-secondary);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  box-shadow: 0 0 8px var(--accent-primary);
 }
 
 /* ============================================
@@ -448,7 +448,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   CHAT INTERFACE - Neon Chat
+   CHAT INTERFACE - Sonic Chat
    ============================================ */
 .chat-container {
   position: relative;
@@ -460,16 +460,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .chat-card {
   background: var(--bg-glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(232, 121, 249, 0.12);
   border-radius: var(--radius-xl);
   overflow: visible;
   box-shadow: var(--shadow-lg);
   position: relative;
 }
 
-/* Neon Top Border on Chat Card */
+/* Sonic Top Border on Chat Card */
 .chat-card::before {
   content: '';
   position: absolute;
@@ -477,9 +477,9 @@ h1, h2, h3, h4, h5, h6 {
   left: 20px;
   right: 20px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
-  opacity: 0.6;
-  box-shadow: 0 0 10px var(--accent-secondary);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  opacity: 0.5;
+  box-shadow: 0 0 12px var(--accent-primary);
 }
 
 .chat-messages {
@@ -718,12 +718,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .markdown-content th {
-  background: rgba(99, 102, 241, 0.12);
+  background: rgba(232, 121, 249, 0.1);
   font-weight: 600;
-  color: var(--accent-secondary);
+  color: var(--accent-primary);
 }
 
-/* Welcome Message - Neon Styling */
+/* Welcome Message - Sonic Styling */
 .welcome-section {
   text-align: center;
   padding: 3.5rem 1.5rem;
@@ -739,7 +739,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: translate(-50%, -50%);
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(232, 121, 249, 0.1) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
 }
@@ -748,13 +748,13 @@ h1, h2, h3, h4, h5, h6 {
   width: 90px;
   height: 90px;
   margin: 0 auto 1.75rem;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid));
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
-  box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 40px rgba(232, 121, 249, 0.4);
   animation: welcomePulse 3s ease-in-out infinite;
   position: relative;
   transform: rotate(45deg);
@@ -765,7 +765,7 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: 4px;
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: 10px;
   transform: rotate(0deg);
 }
 
@@ -775,7 +775,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: rotate(-45deg);
 }
 
-/* Neon shine effect */
+/* Sonic shine effect */
 .welcome-icon::after {
   content: '';
   position: absolute;
@@ -783,19 +783,19 @@ h1, h2, h3, h4, h5, h6 {
   left: -10%;
   width: 120%;
   height: 120%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+  border-radius: 14px;
   pointer-events: none;
 }
 
 @keyframes welcomePulse {
   0%, 100% {
     transform: rotate(45deg) scale(1);
-    box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 40px rgba(232, 121, 249, 0.4);
   }
   50% {
     transform: rotate(45deg) scale(1.05);
-    box-shadow: 0 0 80px rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 60px rgba(232, 121, 249, 0.55);
   }
 }
 
@@ -806,8 +806,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   margin-bottom: 0.75rem;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -822,12 +821,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   INPUT AREA - Neon Input
+   INPUT AREA - Sonic Input
    ============================================ */
 .input-area {
   padding: 1.25rem;
-  background: rgba(8, 8, 12, 0.8);
-  border-top: 1px solid rgba(99, 102, 241, 0.15);
+  background: rgba(9, 9, 11, 0.8);
+  border-top: 1px solid rgba(232, 121, 249, 0.1);
 }
 
 .input-wrapper {
@@ -853,8 +852,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .chat-input:focus {
   outline: none;
-  border-color: var(--accent-secondary);
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15), var(--shadow-sm);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 4px rgba(232, 121, 249, 0.1), var(--shadow-sm);
 }
 
 .chat-input::placeholder {
@@ -864,7 +863,7 @@ h1, h2, h3, h4, h5, h6 {
 .send-btn {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   border: none;
   border-radius: var(--radius-md);
   color: white;
@@ -874,24 +873,24 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 20px rgba(232, 121, 249, 0.35);
   position: relative;
   overflow: hidden;
 }
 
-/* Neon border effect on send button */
+/* Subtle inner border effect on send button */
 .send-btn::before {
   content: '';
   position: absolute;
   inset: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: calc(var(--radius-md) - 2px);
   pointer-events: none;
 }
 
 .send-btn:hover:not(:disabled) {
   transform: scale(1.05) translateY(-2px);
-  box-shadow: 0 0 35px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 30px rgba(232, 121, 249, 0.45);
 }
 
 .send-btn:hover:not(:disabled)::after {
@@ -900,8 +899,8 @@ h1, h2, h3, h4, h5, h6 {
   inset: -2px;
   border-radius: inherit;
   background: inherit;
-  filter: blur(15px);
-  opacity: 0.6;
+  filter: blur(12px);
+  opacity: 0.5;
   z-index: -1;
 }
 
@@ -1000,10 +999,10 @@ h1, h2, h3, h4, h5, h6 {
 .generate-btn {
   width: 100%;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   border: none;
   border-radius: var(--radius-lg);
-  color: var(--bg-primary);
+  color: white;
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
@@ -1015,7 +1014,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 0.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 25px rgba(232, 121, 249, 0.35);
 }
 
 .generate-btn::before {
@@ -1025,7 +1024,7 @@ h1, h2, h3, h4, h5, h6 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1035,7 +1034,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-glow-strong);
+  box-shadow: 0 0 35px rgba(232, 121, 249, 0.45);
 }
 
 .generate-btn:disabled {
@@ -1052,7 +1051,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   AUDIO PLAYER - Neon Player
+   AUDIO PLAYER - Sonic Player
    ============================================ */
 .player-section {
   background: var(--bg-glass);
@@ -1121,21 +1120,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .play-btn {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: white;
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 20px rgba(232, 121, 249, 0.4);
 }
 
 .play-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 35px rgba(139, 92, 246, 0.6);
+  box-shadow: 0 0 30px rgba(232, 121, 249, 0.5);
 }
 
 .secondary-btn {
   flex: 1;
   padding: 0.875rem 1.5rem;
   background: var(--bg-tertiary);
-  border: 2px solid var(--accent-secondary);
+  border: 2px solid var(--accent-primary);
   border-radius: var(--radius-lg);
   color: var(--accent-secondary);
   font-size: 0.95rem;
