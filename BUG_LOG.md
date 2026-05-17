@@ -53,12 +53,15 @@
 ## Bug #6 - AI 回复语言不对齐 (Critical) - FIXED
 **页面**: ChatInterface + API 路由
 **描述**: AI 回复语言与界面语言不一致。用户选择英文界面，但 AI 可能用中文回复
-**根因**: API 调用没有传递 locale，AI 不知道应该用什么语言回复
+**根因**:
+1. API 调用没有传递 locale，AI 不知道应该用什么语言回复
+2. Chat API 日语指令包含错误字符 '친절な' 而非正确日语 '親切な'
 **修复方案**:
 1. ✅ ChatInterface 发送消息时传递 locale
 2. ✅ Chat API 根据 locale 添加 system prompt 指导 AI 回复语言
 3. ✅ Lyrics API 也支持多语言（locale 指令注入到 prompt）
-**状态**: ✅ Fixed
+4. ✅ 修复日语指令错误字符 (b8180b4 commit)
+**状态**: ✅ Fixed - 2026-05-17
 
 ---
 
@@ -115,6 +118,22 @@
 3. 添加 console.log 用于调试
 **状态**: ✅ Fixed - 2026-05-17
 **发现时间**: 2026-05-17 (通过 Playwright E2E 手动测试)
+
+---
+
+## BUG-001 - Quick Generate 按钮点击后重定向到 My Songs (High) - 待调查
+**页面**: /en/chat
+**描述**: 点击 Quick Generate 按钮后，页面重定向到 /ja/my-songs
+**复现步骤**:
+1. 进入 /en/chat 页面
+2. 输入 "给我写一首关于爱情的歌词"
+3. 点击发送按钮
+4. 实际行为: 页面立即重定向到 /ja/my-songs
+**分析**:
+- 未在代码中找到任何重定向到 /my-songs 的逻辑
+- 中间件仅处理 locale 路由，无内容相关重定向
+- 可能是测试环境问题或测试误报
+**状态**: 🔴 待调查 - 需要在真实用户环境中验证
 
 ---
 
