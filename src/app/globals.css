@@ -2198,6 +2198,16 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--radius-lg);
   }
 
+  /* Hide decorative orbs on mobile to prevent overflow */
+  .auth-orb {
+    display: none;
+  }
+
+  /* Hide decorative borders on mobile to prevent overflow */
+  .auth-decoration {
+    display: none;
+  }
+
   .auth-title {
     font-size: 1.35rem;
   }
